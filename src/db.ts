@@ -44,7 +44,8 @@ createTable(
   legalName TEXT DEFAULT NULL,
   perPercentage TEXT DEFAULT NULL,
   percentage TEXT DEFAULT NULL,
-  shareHolders TEXT DEFAULT NULL
+  shareHolders TEXT DEFAULT NULL,
+  zetawallet TEXT DEFAULT NULL
   `
 );
 
@@ -121,7 +122,8 @@ createTable(
   legalName TEXT DEFAULT NULL,
   perPercentage TEXT DEFAULT NULL,
   percentage TEXT DEFAULT NULL,
-  shareHolders TEXT DEFAULT NULL
+  shareHolders TEXT DEFAULT NULL,
+  zetawallet TEXT DEFAULT NULL
   `
 );
 // createTable(
@@ -159,6 +161,11 @@ createTable(
 createTable(
   "nftorders",
   "id SERIAL PRIMARY KEY, player_id INTEGER NOT NULL REFERENCES players(id), nft_id INTEGER NOT NULL REFERENCES nfts(id), developer_id INTEGER NOT NULL REFERENCES developers(id)"
+);
+
+createTable(
+  "nftmarket",
+  "id SERIAL PRIMARY KEY, nft_id INTEGER NOT NULL REFERENCES nfts(id), listing BOOLEAN NOT NULL, seller TEXT NOT NULL, resell BOOLEAN NOT NULL, reselling_price INTEGER DEFAULT NULL"
 );
 
 createTable(

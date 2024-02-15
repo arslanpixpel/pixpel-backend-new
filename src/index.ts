@@ -13,6 +13,7 @@ import pinata from "./routes/pinata";
 import emailValidate from "./routes/emailValidate";
 import mobileValidate from "./routes/mobileValidate";
 import nftTransection from "./routes/nftTransection";
+import nftMarket from "./routes/nftMarket";
 
 const app = express();
 const port = 3001;
@@ -50,6 +51,7 @@ app.use("/launchpad", launchpadRoutes);
 app.use("/tokenrelease", tokenreleaseRoutes);
 app.use("/gamedashboard", gamedashboard);
 app.use("/nfttransection", nftTransection);
+app.use("/nftMarket", nftMarket);
 
 app.listen(port, () => {
   console.log(`App listening at ${port}`);
