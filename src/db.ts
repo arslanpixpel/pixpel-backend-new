@@ -1,11 +1,11 @@
 import { Pool } from "pg";
 
 const pool = new Pool({
-  user: "postgres",
+  // user: "postgres",
+  user: "Pixpelbackend",
   host: "127.0.0.1",
-  // database: "Pixpel-backend",
+  database: "Pixpel-backend",
   // database: "postgres",
-  database: "Pixpelbackend",
   password: "ubuntu",
   port: 5432,
 });
