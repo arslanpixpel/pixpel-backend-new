@@ -7,14 +7,22 @@ interface NftMarket {
   seller: string;
   resell?: boolean;
   reselling_price?: number;
+  reselling_listingid?: number;
 }
 
 export const createNftMarket = async (nftMarket: NftMarket) => {
   try {
-    const { nft_id, listing, seller, resell, reselling_price } = nftMarket;
+    const {
+      nft_id,
+      listing,
+      seller,
+      resell,
+      reselling_price,
+      reselling_listingid,
+    } = nftMarket;
     const result = await query(
-      "INSERT INTO nftmarket(nft_id, listing, seller, resell, reselling_price) VALUES($1, $2, $3, $4, $5) RETURNING *",
-      [nft_id, listing, seller, resell, reselling_price]
+      "INSERT INTO nftmarket(nft_id, listing, seller, resell, reselling_price, reselling_listingid) VALUES($1, $2, $3, $4, $5, $6) RETURNING *",
+      [nft_id, listing, seller, resell, reselling_price, reselling_listingid]
     );
     return result.rows[0];
   } catch (err) {
@@ -39,10 +47,25 @@ export const updateNftMarket = async (
   updates: Partial<NftMarket>
 ) => {
   try {
-    const { nft_id, listing, seller, resell, reselling_price } = updates;
+    const {
+      nft_id,
+      listing,
+      seller,
+      resell,
+      reselling_price,
+      reselling_listingid,
+    } = updates;
     const result = await query(
-      "UPDATE nftmarket SET nft_id=$1, listing=$2, seller=$3, resell=$4, reselling_price=$5 WHERE id=$6 RETURNING *",
-      [nft_id, listing, seller, resell, reselling_price, id]
+      "UPDATE nftmarket SET nft_id=$1, listing=$2, seller=$3, resell=$4, reselling_price=$5, reselling_listingid=$6 WHERE id=$7 RETURNING *",
+      [
+        nft_id,
+        listing,
+        seller,
+        resell,
+        reselling_price,
+        reselling_listingid,
+        id,
+      ]
     );
     return result.rows[0];
   } catch (err) {
