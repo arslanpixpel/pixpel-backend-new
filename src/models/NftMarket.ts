@@ -82,11 +82,27 @@ export const deleteNftMarket = async (id: number) => {
   }
 };
 
+// export const getAllNftNftMarkets = async () => {
+//   try {
+//     const result = await query(
+//       `
+//         SELECT nftmarket.*, nfts.*
+//         FROM nftmarket
+//         JOIN nfts ON nftmarket.nft_id = nfts.id
+//       `,
+//       []
+//     );
+//     return result.rows;
+//   } catch (err) {
+//     throw err;
+//   }
+// };
+
 export const getAllNftNftMarkets = async () => {
   try {
     const result = await query(
       `
-        SELECT nftmarket.*, nfts.*
+        SELECT nftmarket.id AS nftmarket_id, nftmarket.*, nfts.*
         FROM nftmarket
         JOIN nfts ON nftmarket.nft_id = nfts.id
       `,
