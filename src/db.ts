@@ -3,8 +3,8 @@ import { Pool } from "pg";
 const pool = new Pool({
   user: "postgres",
   host: "127.0.0.1",
-  // database: "Pixpel-backend",
-  database: "postgres",
+  database: "Pixpel-backend",
+  // database: "postgres",
   password: "ubuntu",
   port: 5432,
 });
@@ -31,7 +31,7 @@ createTable(
   `
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
-  email TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
   wallet TEXT NOT NULL,
   contact_details BIGINT NULL,
   password TEXT NOT NULL,
@@ -109,7 +109,7 @@ createTable(
   `
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
-  email TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
   wallet TEXT NOT NULL,
   contact_details BIGINT NULL,
   password TEXT NOT NULL,
