@@ -163,7 +163,7 @@ export const signupDeveloper = async (developer: Developer) => {
       "INSERT INTO developers(name, email, wallet, contact_details, password, img, address, country, launchedAtPixpel, legalName, perPercentage, percentage, shareHolders, zetawallet) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *",
       [
         name,
-        email,
+        email.toLowerCase(),
         wallet,
         contact_details,
         hashedPassword,
@@ -188,7 +188,7 @@ export const signupDeveloper = async (developer: Developer) => {
 export const signinDeveloper = async (email: string, password: string) => {
   try {
     const result = await query("SELECT * FROM developers WHERE email = $1", [
-      email,
+      email.toLowerCase(),
     ]);
     const developer = result.rows[0];
     if (developer && (await bcrypt.compare(password, developer.password))) {

@@ -177,7 +177,7 @@ export const signupPlayer = async (player: {
       "INSERT INTO players(name, email, wallet, contact_details, password, img, address, country, launchedAtPixpel, legalName, perPercentage, percentage, shareHolders, zetawallet) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *",
       [
         name,
-        email,
+        email.toLowerCase(),
         wallet,
         contact_details,
         hashedPassword,
@@ -202,7 +202,7 @@ export const signupPlayer = async (player: {
 export const signinPlayer = async (email: string, password: string) => {
   try {
     const result = await query("SELECT * FROM players WHERE email = $1", [
-      email,
+      email.toLowerCase(),
     ]);
     const player = result.rows[0];
     if (player && (await bcrypt.compare(password, player.password))) {
