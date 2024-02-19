@@ -79,3 +79,17 @@ export const getAllNftTransactions = async (
     handleError(err, res);
   }
 };
+
+export const getAllTransactionsBySellerWallet = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const transaction = await Transaction.getAllTransactionsBySellerWallet(
+      parseInt(req.params.id)
+    );
+    handleReadResponse(res, transaction, successMessage, errorMessage);
+  } catch (err) {
+    handleError(err, res);
+  }
+};
