@@ -3,8 +3,8 @@ import { Pool } from "pg";
 const pool = new Pool({
   user: "postgres",
   host: "127.0.0.1",
-  // database: "Pixpel-backend",
-  database: "postgres",
+  database: "Pixpel-backend",
+  // database: "postgres",
   password: "ubuntu",
   port: 5432,
 });
@@ -165,7 +165,7 @@ createTable(
 
 createTable(
   "nftmarket",
-  "id SERIAL PRIMARY KEY, nft_id INTEGER NOT NULL REFERENCES nfts(id), listing BOOLEAN NOT NULL, seller TEXT NOT NULL, resell BOOLEAN NOT NULL, reselling_price INTEGER DEFAULT NULL, reselling_listingid INTEGER DEFAULT NULL"
+  "id SERIAL PRIMARY KEY, nft_id INTEGER NOT NULL REFERENCES nfts(id), listing BOOLEAN NOT NULL, seller TEXT NOT NULL, resell BOOLEAN NOT NULL, reselling_price FLOAT DEFAULT NULL, reselling_listingid INTEGER DEFAULT NULL"
 );
 
 createTable(

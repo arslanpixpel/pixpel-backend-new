@@ -6,7 +6,7 @@ interface NftMarket {
   listing: boolean;
   seller: string;
   resell?: boolean;
-  reselling_price?: number;
+  reselling_price?: any;
   reselling_listingid?: number;
 }
 
