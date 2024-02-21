@@ -116,7 +116,7 @@ export const signupPlayer = async (
     const player = await Player.signupPlayer(req.body);
     const token = jwt.sign(
       { userId: player.id, email: player.email },
-      secretKey,
+      process.env.JWT_KEY,
       { expiresIn: "1d" } // You can adjust the expiration time
     );
 
@@ -170,18 +170,18 @@ export const signinPlayer = async (
       // Generate JWT token
       const token = jwt.sign(
         { userId: player.id, email: player.email },
-        secretKey,
+        process.env.JWT_KEY,
         { expiresIn: "2d" } // Expires in 2 days
       );
 
       // Set the token as a cookie in the response
-      res.cookie("jwtToken", token, {
-        httpOnly: true,
-        maxAge: 172800,
-        secure: true, // Set to false for development on localhost
-        sameSite: "none",
-        // domain: "*.pixpel.io,localhost",
-      });
+      // res.cookie("jwtToken", token, {
+      //   httpOnly: true,
+      //   maxAge: 172800,
+      //   secure: true, // Set to false for development on localhost
+      //   sameSite: "none",
+      //   // domain: "*.pixpel.io,localhost",
+      // });
 
       // 172800 seconds = 2 days
 

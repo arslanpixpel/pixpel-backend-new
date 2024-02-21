@@ -1,5 +1,6 @@
 import express from "express";
 import * as playerController from "../controllers/playerController";
+import { checkCookieMiddleware } from "../middleware/middleware";
 
 const router = express.Router();
 
@@ -12,6 +13,6 @@ router.delete("/delete/:id", playerController.deletePlayer);
 router.get("/getAll", playerController.getAllPlayers);
 router.post("/signup", playerController.signupPlayer);
 router.post("/signin", playerController.signinPlayer);
-router.get("/hello", playerController.hello);
+router.get("/hello", checkCookieMiddleware, playerController.hello);
 
 export default router;

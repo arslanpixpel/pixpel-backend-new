@@ -78,6 +78,7 @@ export const buyNft = async (req: express.Request, res: express.Response) => {
   const insurance_buydate = req.body.insurance_buydate;
   const rebuy = req.body.rebuy;
   const rebuy_nftmarketid = req.body.rebuy_nftmarketid;
+  const listing = req.body.listing;
   // const currentDate = new Date();
   // const insurance_expiryDate = new Date(currentDate.getTime() + insurance_time);
 
@@ -99,7 +100,7 @@ export const buyNft = async (req: express.Request, res: express.Response) => {
 
     const listnftpaytload = {
       nft_id: nftId,
-      listing: true,
+      listing: listing,
       seller: buyerAddress,
       resell: false,
       reselling_price: 0,
@@ -108,7 +109,7 @@ export const buyNft = async (req: express.Request, res: express.Response) => {
 
     const rebuyNft = {
       nft_id: 1,
-      listing: true,
+      listing: listing,
       seller: buyerAddress,
       resell: false,
     };
