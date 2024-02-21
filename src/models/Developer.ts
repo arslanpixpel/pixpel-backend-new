@@ -29,11 +29,27 @@ export const readDeveloper = async (id: number) => {
   }
 };
 
-export const readDeveloperByWallet = async (wallet: string | any) => {
+// export const readDeveloperByWallet = async (wallet: string | any) => {
+//   try {
+//     const result = await query("SELECT * FROM developers WHERE wallet = $1", [
+//       wallet,
+//     ]);
+//     return result.rows[0];
+//   } catch (err) {
+//     const error = err as Error;
+//     throw error;
+//   }
+// };
+
+export const readDeveloperByWallet = async (
+  wallet: string | any,
+  zetawallet: string | any
+) => {
   try {
-    const result = await query("SELECT * FROM developers WHERE wallet = $1", [
-      wallet,
-    ]);
+    const result = await query(
+      "SELECT * FROM developers WHERE wallet = $1 OR zetawallet = $2",
+      [wallet, zetawallet]
+    );
     return result.rows[0];
   } catch (err) {
     const error = err as Error;

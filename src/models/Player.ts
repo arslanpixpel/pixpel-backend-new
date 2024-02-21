@@ -41,11 +41,27 @@ export const emailChecker = async (email: string | any) => {
   }
 };
 
-export const readPlayerByWallet = async (wallet: string) => {
+// export const readPlayerByWallet = async (wallet: string) => {
+//   try {
+//     const result = await query("SELECT * FROM players WHERE wallet = $1", [
+//       wallet,
+//     ]);
+//     return result.rows[0];
+//   } catch (err) {
+//     const error = err as Error;
+//     throw error;
+//   }
+// };
+
+export const readPlayerByWallet = async (
+  wallet: string,
+  zetawallet: string
+) => {
   try {
-    const result = await query("SELECT * FROM players WHERE wallet = $1", [
-      wallet,
-    ]);
+    const result = await query(
+      "SELECT * FROM players WHERE wallet = $1 OR zetawallet = $2",
+      [wallet, zetawallet]
+    );
     return result.rows[0];
   } catch (err) {
     const error = err as Error;

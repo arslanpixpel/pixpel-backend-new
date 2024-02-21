@@ -11,7 +11,7 @@ import {
   handleUpdateResponse,
   handleDeleteResponse,
 } from "../helper/Responses";
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 const secretKey = "3650"; // Replace with your actual secret key
 
 export const readDeveloper = async (
@@ -31,7 +31,10 @@ export const readDeveloperByWallet = async (
   res: express.Response
 ) => {
   try {
-    const developer = await Developer.readDeveloperByWallet(req.body.wallet);
+    const developer = await Developer.readDeveloperByWallet(
+      req.body.wallet,
+      req.body.zetawallet
+    );
     handleReadResponse(res, developer, successMessage, errorMessage);
   } catch (err) {
     handleError(err, res);
@@ -49,7 +52,6 @@ export const readDeveloperByEmail = async (
     handleError(err, res);
   }
 };
-
 
 export const updateDeveloperImg = async (
   req: express.Request,
@@ -118,7 +120,7 @@ export const signupDeveloper = async (
     const token = jwt.sign(
       { userId: developer.id, email: developer.email },
       secretKey,
-      { expiresIn: '1d' } // You can adjust the expiration time
+      { expiresIn: "1d" } // You can adjust the expiration time
     );
 
     res.status(201).send({
@@ -143,7 +145,7 @@ export const signinDeveloper = async (
       const token = jwt.sign(
         { userId: developer.id, email: developer.email },
         secretKey,
-        { expiresIn: '1d' } // You can adjust the expiration time
+        { expiresIn: "1d" } // You can adjust the expiration time
       );
 
       res.status(200).send({
