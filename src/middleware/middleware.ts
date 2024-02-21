@@ -7,7 +7,12 @@ export const checkCookieMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  const jwtToken = req.headers.jwtToken;
+  let jwtToken;
+  const authAdminHeader = req.headers.authorization;
+  if (authAdminHeader) {
+    const bearer = authAdminHeader.split(" "); // for bearer auth
+    jwtToken = bearer[1];
+  }
 
   if (!jwtToken) {
     res.status(200).send({ message: "Token is expired" });

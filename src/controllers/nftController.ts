@@ -18,7 +18,19 @@ export const createNft = async (
 ) => {
   try {
     const nft = await Nft.createNft(req.body);
-    handleCreateResponse(res, nft, successMessage, errorMessage);
+    if (!nft) throw new Error("Failed to create the NFT");
+    const listnftpaytload = {
+      nft_id: nft.id,
+      listing: true,
+      seller: nft.primary_owner,
+      resell: false,
+      reselling_price: 0,
+      reselling_listingid: 0,
+    };
+
+    const listnft = await NftMarket.createNftMarket(listnftpaytload);
+    const nftcompelted = { nft, listnft };
+    handleCreateResponse(res, nftcompelted, successMessage, errorMessage);
   } catch (err) {
     handleError(err, res);
   }
