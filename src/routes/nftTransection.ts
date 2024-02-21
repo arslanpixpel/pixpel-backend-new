@@ -11,5 +11,9 @@ router.delete(
   transactionController.deleteTransaction
 );
 router.get("/getAlltransaction", transactionController.getAllNftTransactions);
+router.get(
+  "/getAlltransectionbysellerwallet/:id",
+  transactionController.getAllTransactionsBySellerWallet
+);
 
 export default router;

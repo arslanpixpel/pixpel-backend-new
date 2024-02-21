@@ -7,15 +7,16 @@ interface Developer {
   contact_details: string;
   password: string;
   verified: string;
-  img: string ;
-  address: string ;
-  dateOfLaunch: string ;
-  country: string ;
-  launchedAtPixpel: string ;
-  legalName: string ;
-  perPercentage: string ;
-  percentage: string ;
-  shareHolders:string
+  img: string;
+  address: string;
+  dateOfLaunch: string;
+  country: string;
+  launchedAtPixpel: string;
+  legalName: string;
+  perPercentage: string;
+  percentage: string;
+  shareHolders: string;
+  zetawallet: string;
 }
 
 export const readDeveloper = async (id: number) => {
@@ -28,9 +29,27 @@ export const readDeveloper = async (id: number) => {
   }
 };
 
-export const readDeveloperByWallet = async (wallet: string | any) => {
+// export const readDeveloperByWallet = async (wallet: string | any) => {
+//   try {
+//     const result = await query("SELECT * FROM developers WHERE wallet = $1", [
+//       wallet,
+//     ]);
+//     return result.rows[0];
+//   } catch (err) {
+//     const error = err as Error;
+//     throw error;
+//   }
+// };
+
+export const readDeveloperByWallet = async (
+  wallet: string | any,
+  zetawallet: string | any
+) => {
   try {
-    const result = await query("SELECT * FROM developers WHERE wallet = $1", [wallet]);
+    const result = await query(
+      "SELECT * FROM developers WHERE wallet = $1 OR zetawallet = $2",
+      [wallet, zetawallet]
+    );
     return result.rows[0];
   } catch (err) {
     const error = err as Error;
@@ -40,7 +59,9 @@ export const readDeveloperByWallet = async (wallet: string | any) => {
 
 export const readDeveloperByEmail = async (email: string | any) => {
   try {
-    const result = await query("SELECT * FROM developers WHERE email = $1", [email]);
+    const result = await query("SELECT * FROM developers WHERE email = $1", [
+      email,
+    ]);
     return result.rows[0];
   } catch (err) {
     const error = err as Error;
@@ -48,7 +69,10 @@ export const readDeveloperByEmail = async (email: string | any) => {
   }
 };
 
-export const updateDeveloperImage = async (id: number, updates: Partial<Developer>) => {
+export const updateDeveloperImage = async (
+  id: number,
+  updates: Partial<Developer>
+) => {
   try {
     const { img } = updates;
 
@@ -63,13 +87,47 @@ export const updateDeveloperImage = async (id: number, updates: Partial<Develope
   }
 };
 
-export const updateDeveloper = async (id: number, updates: Partial<Developer>) => {
+export const updateDeveloper = async (
+  id: number,
+  updates: Partial<Developer>
+) => {
   try {
-    const { name, email, wallet, contact_details, verified, img, address, country, launchedAtPixpel, legalName, perPercentage, percentage, shareHolders } = updates;
+    const {
+      name,
+      email,
+      wallet,
+      contact_details,
+      verified,
+      img,
+      address,
+      country,
+      launchedAtPixpel,
+      legalName,
+      perPercentage,
+      percentage,
+      shareHolders,
+      zetawallet,
+    } = updates;
 
     const result = await query(
-      "UPDATE developers SET name=$1, email=$2, wallet=$3, contact_details=$4, verified=$5, img=$6, address=$7, country=$8, launchedAtPixpel=$9, legalName=$10, perPercentage=$11, percentage=$12, shareHolders=$13 WHERE id=$14 RETURNING *",
-      [name, email, wallet, contact_details, verified, img, address, country, launchedAtPixpel, legalName, perPercentage, percentage, shareHolders, id]
+      "UPDATE developers SET name=$1, email=$2, wallet=$3, contact_details=$4, verified=$5, img=$6, address=$7, country=$8, launchedAtPixpel=$9, legalName=$10, perPercentage=$11, percentage=$12, shareHolders=$13, zetawallet=$14 WHERE id=$15 RETURNING *",
+      [
+        name,
+        email,
+        wallet,
+        contact_details,
+        verified,
+        img,
+        address,
+        country,
+        launchedAtPixpel,
+        legalName,
+        perPercentage,
+        percentage,
+        shareHolders,
+        zetawallet,
+        id,
+      ]
     );
     return result.rows[0];
   } catch (err) {
@@ -100,11 +158,41 @@ export const getAllDevelopers = async () => {
 
 export const signupDeveloper = async (developer: Developer) => {
   try {
-    const { name, email, wallet, contact_details, password, img ,address ,country ,launchedAtPixpel ,legalName ,perPercentage ,percentage ,shareHolders  } = developer;
+    const {
+      name,
+      email,
+      wallet,
+      contact_details,
+      password,
+      img,
+      address,
+      country,
+      launchedAtPixpel,
+      legalName,
+      perPercentage,
+      percentage,
+      shareHolders,
+      zetawallet,
+    } = developer;
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await query(
-      "INSERT INTO developers(name, email, wallet, contact_details, password, img, address, country, launchedAtPixpel, legalName, perPercentage, percentage, shareHolders) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *",
-      [name, email, wallet, contact_details, hashedPassword, img ,address ,country ,launchedAtPixpel ,legalName ,perPercentage ,percentage ,shareHolders]
+      "INSERT INTO developers(name, email, wallet, contact_details, password, img, address, country, launchedAtPixpel, legalName, perPercentage, percentage, shareHolders, zetawallet) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *",
+      [
+        name,
+        email.toLowerCase(),
+        wallet,
+        contact_details,
+        hashedPassword,
+        img,
+        address,
+        country,
+        launchedAtPixpel,
+        legalName,
+        perPercentage,
+        percentage,
+        shareHolders,
+        zetawallet,
+      ]
     );
     return result.rows[0];
   } catch (err) {
@@ -115,7 +203,9 @@ export const signupDeveloper = async (developer: Developer) => {
 
 export const signinDeveloper = async (email: string, password: string) => {
   try {
-    const result = await query("SELECT * FROM developers WHERE email = $1", [email]);
+    const result = await query("SELECT * FROM developers WHERE email = $1", [
+      email.toLowerCase(),
+    ]);
     const developer = result.rows[0];
     if (developer && (await bcrypt.compare(password, developer.password))) {
       return developer;

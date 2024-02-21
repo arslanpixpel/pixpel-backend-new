@@ -13,6 +13,8 @@ import pinata from "./routes/pinata";
 import emailValidate from "./routes/emailValidate";
 import mobileValidate from "./routes/mobileValidate";
 import nftTransection from "./routes/nftTransection";
+import nftMarket from "./routes/nftMarket";
+import cookieParser from "cookie-parser";
 
 const app = express();
 const port = 3001;
@@ -25,6 +27,7 @@ const swaggerDocumentation = require("./helper/Documentation.ts");
 app.use(cors());
 app.options("*", cors());
 app.use(express.json());
+app.use(cookieParser());
 app.use("/documentations", swaggerDoc.serve);
 app.use("/documentations", swaggerDoc.setup(swaggerDocumentation));
 
@@ -50,6 +53,7 @@ app.use("/launchpad", launchpadRoutes);
 app.use("/tokenrelease", tokenreleaseRoutes);
 app.use("/gamedashboard", gamedashboard);
 app.use("/nfttransection", nftTransection);
+app.use("/nftMarket", nftMarket);
 
 app.listen(port, () => {
   console.log(`App listening at ${port}`);

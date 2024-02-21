@@ -10,6 +10,7 @@ import {
   errorMessage,
   handleError,
 } from "../helper/Responses";
+import * as NftMarket from "../models/NftMarket";
 
 export const createNft = async (
   req: express.Request,
@@ -17,7 +18,19 @@ export const createNft = async (
 ) => {
   try {
     const nft = await Nft.createNft(req.body);
-    handleCreateResponse(res, nft, successMessage, errorMessage);
+    if (!nft) throw new Error("Failed to create the NFT");
+    const listnftpaytload = {
+      nft_id: nft.id,
+      listing: true,
+      seller: nft.primary_owner,
+      resell: false,
+      reselling_price: 0,
+      reselling_listingid: 0,
+    };
+
+    const listnft = await NftMarket.createNftMarket(listnftpaytload);
+    const nftcompelted = { nft, listnft };
+    handleCreateResponse(res, nftcompelted, successMessage, errorMessage);
   } catch (err) {
     handleError(err, res);
   }
@@ -75,10 +88,13 @@ export const buyNft = async (req: express.Request, res: express.Response) => {
   const insurance = req.body.insurance;
   const insurance_expiryDate = req.body.insurance_expiryDate;
   const insurance_buydate = req.body.insurance_buydate;
+  const rebuy = req.body.rebuy;
+  const rebuy_nftmarketid = req.body.rebuy_nftmarketid;
+  const listing = req.body.listing;
   // const currentDate = new Date();
   // const insurance_expiryDate = new Date(currentDate.getTime() + insurance_time);
 
-  console.log(req.body, "payload");
+  // console.log(req.body, "payload");
 
   // Input Validation
   if (!nftId || !buyerAddress) {
@@ -94,12 +110,39 @@ export const buyNft = async (req: express.Request, res: express.Response) => {
       insurance_buydate
     );
 
+    const listnftpaytload = {
+      nft_id: nftId,
+      listing: listing,
+      seller: buyerAddress,
+      resell: false,
+      reselling_price: 0,
+      reselling_listingid: 0,
+    };
+
+    const rebuyNft = {
+      nft_id: 1,
+      listing: listing,
+      seller: buyerAddress,
+      resell: false,
+    };
+
+    const nftMarket = !rebuy
+      ? await NftMarket.createNftMarket(listnftpaytload)
+      : await NftMarket.updateNftMarket(parseInt(rebuy_nftmarketid), rebuyNft);
+
     if (!updatedNft) {
       return res.status(404).json({ error: "NFT not found" });
     }
 
+    if (!nftMarket) {
+      return res
+        .status(404)
+        .json({ error: "NFT not Listed to the Nft Market" });
+    }
+
+    const buynft = { updatedNft, nftMarket };
     // Handle success response
-    handleCreateResponse(res, updatedNft, successMessage, errorMessage);
+    handleCreateResponse(res, buynft, successMessage, errorMessage);
   } catch (err) {
     // Handle errors
     handleError(err, res);

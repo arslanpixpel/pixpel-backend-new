@@ -105,3 +105,16 @@ export const getAllNftTransactions = async () => {
     throw error;
   }
 };
+
+export const getAllTransactionsBySellerWallet = async (nft_id: number) => {
+  try {
+    const result = await query(
+      "SELECT * FROM nft_transection WHERE nft_id = $1",
+      [nft_id]
+    );
+    return result.rows;
+  } catch (err) {
+    const error = err as Error;
+    throw error;
+  }
+};
