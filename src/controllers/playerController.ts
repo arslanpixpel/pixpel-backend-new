@@ -129,6 +129,35 @@ export const signupPlayer = async (
   }
 };
 
+// export const signinPlayer = async (
+//   req: express.Request,
+//   res: express.Response
+// ) => {
+//   try {
+//     const { email, password } = req.body;
+//     const player = await Player.signinPlayer(email, password);
+
+//     if (player) {
+//       console.log(player.id);
+//       // Generate JWT token
+//       const token = jwt.sign(
+//         { userId: player.id, email: player.email },
+//         secretKey,
+//         { expiresIn: "1d" } // You can adjust the expiration time
+//       );
+
+//       res.status(200).send({
+//         message: "player signed in successfully",
+//         data: { player, token },
+//       });
+//     } else {
+//       res.status(401).send({ error: "Invalid email or password" });
+//     }
+//   } catch (err) {
+//     handleError(err, res);
+//   }
+// };
+
 export const signinPlayer = async (
   req: express.Request,
   res: express.Response
@@ -138,16 +167,26 @@ export const signinPlayer = async (
     const player = await Player.signinPlayer(email, password);
 
     if (player) {
-      console.log(player.id);
       // Generate JWT token
       const token = jwt.sign(
         { userId: player.id, email: player.email },
         secretKey,
-        { expiresIn: "1d" } // You can adjust the expiration time
+        { expiresIn: "2d" } // Expires in 2 days
       );
 
+      // Set the token as a cookie in the response
+      res.cookie("jwtToken", token, {
+        httpOnly: true,
+        maxAge: 172800,
+        secure: true, // Set to false for development on localhost
+        sameSite: "none",
+        // domain: "*.pixpel.io,localhost",
+      });
+
+      // 172800 seconds = 2 days
+
       res.status(200).send({
-        message: "player signed in successfully",
+        message: "Player signed in successfully",
         data: { player, token },
       });
     } else {
