@@ -23,6 +23,7 @@ export const checkCookieMiddleware = (
     // console.log(decoded);
     next();
   } catch (error) {
-    console.log(error);
+    res.status(500).send({ error: error });
+    // console.log(error);
   }
 };
