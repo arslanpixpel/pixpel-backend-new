@@ -165,7 +165,7 @@ createTable(
 
 createTable(
   "nftmarket",
-  "id SERIAL PRIMARY KEY, nft_id INTEGER NOT NULL REFERENCES nfts(id), listing BOOLEAN NOT NULL, seller TEXT NOT NULL, resell BOOLEAN NOT NULL, reselling_price FLOAT DEFAULT NULL, reselling_listingid INTEGER DEFAULT NULL"
+  "id SERIAL PRIMARY KEY, nft_id INTEGER NOT NULL REFERENCES nfts(id), listing BOOLEAN NOT NULL, seller TEXT NOT NULL, resell BOOLEAN NOT NULL, reselling_price FLOAT DEFAULT NULL, reselling_listingid INTEGER DEFAULT NULL, reselling_name TEXT DEFAULT NULL"
 );
 
 createTable(
