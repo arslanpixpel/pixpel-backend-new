@@ -14,6 +14,8 @@ import emailValidate from "./routes/emailValidate";
 import mobileValidate from "./routes/mobileValidate";
 import nftTransection from "./routes/nftTransection";
 import nftMarket from "./routes/nftMarket";
+import nftAuctions from "./routes/nftAuctions";
+import nftBidiing from "./routes/nftBidding";
 import cookieParser from "cookie-parser";
 
 const app = express();
@@ -54,6 +56,8 @@ app.use("/tokenrelease", tokenreleaseRoutes);
 app.use("/gamedashboard", gamedashboard);
 app.use("/nfttransection", nftTransection);
 app.use("/nftMarket", nftMarket);
+app.use("/nftauction", nftAuctions);
+app.use("/nftbidding", nftBidiing);
 
 app.listen(port, () => {
   console.log(`App listening at ${port}`);

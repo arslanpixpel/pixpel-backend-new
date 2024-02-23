@@ -178,6 +178,16 @@ createTable(
   "id SERIAL PRIMARY KEY, player_id INTEGER NOT NULL REFERENCES players(id), nft_id INTEGER NOT NULL REFERENCES nfts(id), developer_id INTEGER NOT NULL REFERENCES developers(id)"
 );
 
+createTable(
+  "nftauction",
+  "id SERIAL PRIMARY KEY, nft_id INTEGER NOT NULL REFERENCES nfts(id), auction_startdate TEXT NOT NULL, auction_enddate TEXT NOT NULL, status TEXT NOT NULL"
+);
+
+createTable(
+  "nftbiding",
+  "id SERIAL PRIMARY KEY, nftauction_id INTEGER NOT NULL REFERENCES nftauction(id), bidder_wallet TEXT NOT NULL, bidding_price FLOAT NOT NULL, bidding_time TEXT NOT NULL"
+);
+
 // createTable(
 //   "launchpad_data",
 //   "id SERIAL PRIMARY KEY, cancel BOOLEAN NOT NULL, cis2_amount INTEGER NOT NULL, cis2_price INTEGER NOT NULL, cliff_duration INTEGER NOT NULL, cliff_period TEXT NOT NULL, description TEXT NOT NULL, dev_paid INTEGER NOT NULL, discord_url TEXT, end_time TEXT NOT NULL, fb_url TEXT, github_url TEXT, hard_cap INTEGER NOT NULL, holders INTEGER NOT NULL, address TEXT NOT NULL, amount INTEGER NOT NULL, instagram_url TEXT, invest_amount INTEGER NOT NULL, live BOOLEAN NOT NULL, live_pause_count INTEGER NOT NULL, logo_url TEXT NOT NULL, maximum_invest INTEGER NOT NULL, minimum_invest INTEGER NOT NULL, owner TEXT NOT NULL, pause_start TEXT NOT NULL, pause_until TEXT NOT NULL, reddit_url TEXT, soft_cap INTEGER NOT NULL,start_time TEXT NOT NULL,telegram_url TEXT,title TEXT NOT NULL,token_release_data INTEGER[] NOT NULL,total_tx INTEGER NOT NULL,twitter_url TEXT,website_url TEXT"
