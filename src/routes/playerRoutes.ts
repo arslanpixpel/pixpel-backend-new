@@ -1,6 +1,6 @@
 import express from "express";
 import * as playerController from "../controllers/playerController";
-import { checkCookieMiddleware } from "../middleware/middleware";
+import { checkCookieMiddleware } from "../middleware/authMiddleware";
 
 const router = express.Router();
 
