@@ -121,7 +121,7 @@ export const buyNft = async (req: express.Request, res: express.Response) => {
     };
 
     const rebuyNft = {
-      nft_id: 1,
+      nft_id: nftId,
       listing: listing,
       seller: buyerAddress,
       resell: false,
