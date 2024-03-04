@@ -12,5 +12,9 @@ router.delete("/delete/:id", developerController.deleteDeveloper);
 router.get("/getAll", developerController.getAllDevelopers);
 router.post("/signup", developerController.signupDeveloper);
 router.post("/signin", developerController.signinDeveloper);
+router.post(
+  "/forgetPassword",
+  developerController.updatePlayerPasswordController
+);
 
 export default router;
