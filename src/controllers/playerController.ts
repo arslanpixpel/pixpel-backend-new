@@ -204,3 +204,16 @@ export const hello = async (req: express.Request, res: express.Response) => {
     handleError(err, res);
   }
 };
+
+export const updatePlayerPasswordController = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { email, newPassword } = req.body;
+    const player = await Player.updatePlayerPassword(email, newPassword);
+    res.status(200).json({ message: "Password updated successfully", player });
+  } catch (err) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

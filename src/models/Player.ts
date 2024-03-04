@@ -231,3 +231,20 @@ export const signinPlayer = async (email: string, password: string) => {
     throw error;
   }
 };
+
+export const updatePlayerPassword = async (
+  email: string,
+  newPassword: string
+) => {
+  try {
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const result = await query(
+      "UPDATE players SET password = $1 WHERE email = $2 RETURNING *",
+      [hashedPassword, email.toLowerCase()]
+    );
+    return result.rows[0];
+  } catch (err) {
+    const error = err as Error;
+    throw error;
+  }
+};

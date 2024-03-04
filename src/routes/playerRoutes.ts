@@ -13,6 +13,7 @@ router.delete("/delete/:id", playerController.deletePlayer);
 router.get("/getAll", playerController.getAllPlayers);
 router.post("/signup", playerController.signupPlayer);
 router.post("/signin", playerController.signinPlayer);
+router.post("/forgetPassword", playerController.updatePlayerPasswordController);
 router.get("/hello", checkCookieMiddleware, playerController.hello);
 
 export default router;
