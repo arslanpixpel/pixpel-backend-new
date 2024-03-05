@@ -14,6 +14,7 @@ router.get("/getAll", playerController.getAllPlayers);
 router.post("/signup", playerController.signupPlayer);
 router.post("/signin", playerController.signinPlayer);
 router.post("/forgetPassword", playerController.updatePlayerPasswordController);
+router.post("/checkemail", playerController.checkEmailController);
 router.get("/hello", checkCookieMiddleware, playerController.hello);
 
 export default router;

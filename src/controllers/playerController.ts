@@ -217,3 +217,18 @@ export const updatePlayerPasswordController = async (
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const checkEmailController = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { email } = req.body;
+    const emailExists = await Player.checkEmail(email);
+
+    res.status(200).json({ exists: emailExists });
+  } catch (err) {
+    console.error("Error checking email:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

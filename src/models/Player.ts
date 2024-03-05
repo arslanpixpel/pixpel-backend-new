@@ -248,3 +248,20 @@ export const updatePlayerPassword = async (
     throw error;
   }
 };
+
+export const checkEmail = async (email: string): Promise<boolean> => {
+  try {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      throw new Error("Invalid email address");
+    }
+
+    const result = await query("SELECT email FROM players WHERE email = $1", [
+      email.toLowerCase(),
+    ]);
+    return result.rows.length > 0;
+  } catch (err) {
+    console.error("Error checking email:", err);
+    throw new Error("An error occurred while checking the email");
+  }
+};

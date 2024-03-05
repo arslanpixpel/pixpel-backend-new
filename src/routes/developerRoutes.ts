@@ -16,5 +16,6 @@ router.post(
   "/forgetPassword",
   developerController.updatePlayerPasswordController
 );
+router.post("/checkemail", developerController.checkEmailController);
 
 export default router;
