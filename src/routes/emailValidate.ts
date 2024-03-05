@@ -60,4 +60,35 @@ route.post("/send-otp", async (req: Request, res: Response) => {
   });
 });
 
+const otpExpirationTime = 60 * 1000;
+let otpData: { [key: string]: { otp: string; timestamp: number } } = {};
+route.post("/sendOtp", async (req: Request, res: Response) => {
+  const { email } = req.body;
+
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const timestamp = new Date().getTime();
+
+  const mailOptions = {
+    from: "pixpelsupport@pixpel.io",
+    to: email,
+    subject: "OTP Verification",
+    text: `Your OTP is: ${otp}`,
+  };
+
+  emailTransporter.sendMail(mailOptions, (error: any) => {
+    if (error) {
+      console.error("Error sending OTP email", error);
+      return res.status(500).json({ error: "Error sending OTP email" });
+    }
+
+    otpData[email] = { otp, timestamp };
+
+    setTimeout(() => {
+      delete otpData[email];
+    }, otpExpirationTime);
+
+    res.json({ message: "OTP sent to email successfully", otp, timestamp });
+  });
+});
+
 export default route;
