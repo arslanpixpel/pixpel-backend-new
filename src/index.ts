@@ -17,6 +17,8 @@ import nftMarket from "./routes/nftMarketRoutes";
 import nftAuctions from "./routes/nftAuctionsRoutes";
 import nftBidiing from "./routes/nftBiddingRoutes";
 import uploadImage from "./routes/imageRoutes";
+import fireblocks from "./routes/fireBlocks";
+import authentication from "./routes/authRoutes";
 import cookieParser from "cookie-parser";
 
 const app = express();
@@ -60,6 +62,8 @@ app.use("/nftMarket", nftMarket);
 app.use("/nftauction", nftAuctions);
 app.use("/nftbidding", nftBidiing);
 app.use("/uploadimage", uploadImage);
+app.use("/fireBlocks", fireblocks);
+app.use("/authentication", authentication);
 
 app.listen(port, () => {
   console.log(`App listening at ${port}`);

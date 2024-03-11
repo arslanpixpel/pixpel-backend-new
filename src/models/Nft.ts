@@ -367,18 +367,48 @@ export const buyNft = async (
   insurance_buydate: string
 ) => {
   try {
-    const result = await query(
-      `UPDATE nfts
-       SET
-         secondary_owner = COALESCE(secondary_owner, '{}'::jsonb[]) || 
-                           jsonb_build_object('wallet', $1::TEXT, 'insurance', $2::BOOLEAN, 'insurance_expirydate', $3::TEXT, 'insurance_buydate', $4::TEXT),
-         supply_quantity = supply_quantity - 1  -- Decrease supply_quantity by 1
-       WHERE id = $5
-       RETURNING *`,
-      [buyerAddress, insurance, insurance_expiryDate, insurance_buydate, nftId]
+    const supplyQuery = await query(
+      `SELECT supply_quantity FROM nfts WHERE id = $1`,
+      [nftId]
     );
-    console.log(result.rows[0]);
-    return result.rows[0];
+
+    const currentSupply = supplyQuery.rows[0].supply_quantity;
+    if (currentSupply > 0) {
+      const result = await query(
+        `UPDATE nfts
+         SET
+           secondary_owner = COALESCE(secondary_owner, '{}'::jsonb[]) || 
+                             jsonb_build_object('wallet', $1::TEXT, 'insurance', $2::BOOLEAN, 'insurance_expirydate', $3::TEXT, 'insurance_buydate', $4::TEXT),
+           supply_quantity = supply_quantity - 1  -- Decrease supply_quantity by 1
+         WHERE id = $5
+         RETURNING *`,
+        [
+          buyerAddress,
+          insurance,
+          insurance_expiryDate,
+          insurance_buydate,
+          nftId,
+        ]
+      );
+      return result.rows[0];
+    } else {
+      const result = await query(
+        `UPDATE nfts
+         SET
+           secondary_owner = COALESCE(secondary_owner, '{}'::jsonb[]) || 
+                             jsonb_build_object('wallet', $1::TEXT, 'insurance', $2::BOOLEAN, 'insurance_expirydate', $3::TEXT, 'insurance_buydate', $4::TEXT)
+         WHERE id = $5
+         RETURNING *`,
+        [
+          buyerAddress,
+          insurance,
+          insurance_expiryDate,
+          insurance_buydate,
+          nftId,
+        ]
+      );
+      return result.rows[0];
+    }
   } catch (err) {
     const error = err as Error;
     throw error;

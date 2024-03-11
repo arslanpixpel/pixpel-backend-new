@@ -93,9 +93,6 @@ export const buyNft = async (req: express.Request, res: express.Response) => {
   const listing = req.body.listing;
   // const currentDate = new Date();
   // const insurance_expiryDate = new Date(currentDate.getTime() + insurance_time);
-
-  // console.log(req.body, "payload");
-
   // Input Validation
   if (!nftId || !buyerAddress) {
     return res.status(400).json({ error: "Invalid request parameters" });
@@ -109,7 +106,6 @@ export const buyNft = async (req: express.Request, res: express.Response) => {
       insurance_expiryDate,
       insurance_buydate
     );
-
     const listnftpaytload = {
       nft_id: nftId,
       listing: listing,

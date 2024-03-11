@@ -3,8 +3,8 @@ import { Pool } from "pg";
 const pool = new Pool({
   user: "postgres",
   host: "127.0.0.1",
-  database: "Pixpel-backend",
-  // database: "postgres",
+  // database: "Pixpel-backend",
+  database: "postgres",
   password: "ubuntu",
   port: 5432,
 });
@@ -201,6 +201,38 @@ createTable(
 createTable(
   "token_release_data",
   "id SERIAL PRIMARY KEY, per_cycle_release INTEGER NOT NULL, release_time TEXT NOT NULL"
+);
+
+createTable(
+  "developerauth",
+  `
+  id SERIAL PRIMARY KEY,
+  developer_id INTEGER REFERENCES developers(id),
+  email TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  otp_enabled BOOLEAN DEFAULT FALSE NOT NULL,
+  otp_verified BOOLEAN DEFAULT FALSE NOT NULL,
+  otp_ascii TEXT DEFAULT NULL,
+  otp_hex TEXT DEFAULT NULL,
+  otp_base32 TEXT DEFAULT NULL,
+  otp_auth_url TEXT DEFAULT NULL
+  `
+);
+
+createTable(
+  "playerauth",
+  `
+  id SERIAL PRIMARY KEY,
+  player_id INTEGER REFERENCES players(id),
+  email TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  otp_enabled BOOLEAN DEFAULT FALSE NOT NULL,
+  otp_verified BOOLEAN DEFAULT FALSE NOT NULL,
+  otp_ascii TEXT DEFAULT NULL,
+  otp_hex TEXT DEFAULT NULL,
+  otp_base32 TEXT DEFAULT NULL,
+  otp_auth_url TEXT DEFAULT NULL
+  `
 );
 
 // createTable(
