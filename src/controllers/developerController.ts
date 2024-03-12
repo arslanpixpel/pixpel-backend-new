@@ -31,9 +31,16 @@ export const readDeveloperByWallet = async (
   res: express.Response
 ) => {
   try {
+    if (req.body.zetawallet === "" && req.body.wallet === "") {
+      throw new Error("EmptyWallet not Found");
+    }
+    // const developer = await Developer.readDeveloperByWallet(
+    //   req.body.wallet,
+    //   req.body.zetawallet
+    // );
     const developer = await Developer.readDeveloperByWallet(
-      req.body.wallet,
-      req.body.zetawallet
+      req.body.wallet || null,
+      req.body.zetawallet || null
     );
     handleReadResponse(res, developer, successMessage, errorMessage);
   } catch (err) {

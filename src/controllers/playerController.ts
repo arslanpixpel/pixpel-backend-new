@@ -31,9 +31,15 @@ export const readPlayerWallet = async (
   res: express.Response
 ) => {
   const { wallet, zetawallet } = req.body;
-
   try {
-    const player = await Player.readPlayerByWallet(wallet, zetawallet);
+    if (zetawallet === "" && wallet === "") {
+      throw new Error("EmptyWallet not Found");
+    }
+    const player = await Player.readPlayerByWallet(
+      wallet || null,
+      zetawallet || null
+    );
+    // const player = await Player.readPlayerByWallet(wallet, zetawallet);
     handleReadResponse(res, player, successMessage, errorMessage);
   } catch (err) {
     res.send(err);
