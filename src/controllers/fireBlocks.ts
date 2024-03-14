@@ -25,7 +25,7 @@ const eip1193Provider = new FireblocksWeb3Provider({
   apiKey: process.env.API_KEY || "",
   vaultAccountIds: [2],
   chainId: ChainId.POLYGON_TEST,
-  rpcUrl: "https://rpc-mumbai.maticvigil.com",
+  rpcUrl: "https://polygon-testnet.public.blastapi.io",
   apiBaseUrl: ApiBaseUrl.Sandbox,
 
   logTransactionStatusChanges: true,

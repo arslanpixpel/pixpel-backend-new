@@ -11,6 +11,7 @@ import {
   handleError,
 } from "../helper/Responses";
 import * as NftMarket from "../models/NftMarket";
+import { createTransaction } from "../models/NfTransection";
 
 export const createNft = async (
   req: express.Request,
@@ -123,10 +124,25 @@ export const buyNft = async (req: express.Request, res: express.Response) => {
       resell: false,
     };
 
+    const currentDate = new Date();
+    const isoString = currentDate.toISOString().slice(0, 10);
+    const transaction_time = isoString.replace("-", "/").replace("-", "/");
+
+    const nft_transection = {
+      nfttoken_id: nftId,
+      nft_id: nftId,
+      buyer: buyerAddress,
+      seller: "seller",
+      transaction_hash: "xxxxxxx",
+      transaction_time: transaction_time,
+      price: 3,
+    };
+
     const nftMarket = !rebuy
       ? await NftMarket.createNftMarket(listnftpaytload)
       : await NftMarket.updateNftMarket(parseInt(rebuy_nftmarketid), rebuyNft);
 
+    const nftTransection = await createTransaction(nft_transection);
     if (!updatedNft) {
       return res.status(404).json({ error: "NFT not found" });
     }
@@ -137,7 +153,11 @@ export const buyNft = async (req: express.Request, res: express.Response) => {
         .json({ error: "NFT not Listed to the Nft Market" });
     }
 
-    const buynft = { updatedNft, nftMarket };
+    if (!nftTransection) {
+      return res.status(404).json({ error: "NFT Transection Record Failed" });
+    }
+
+    const buynft = { updatedNft, nftMarket, nftTransection };
     // Handle success response
     handleCreateResponse(res, buynft, successMessage, errorMessage);
   } catch (err) {

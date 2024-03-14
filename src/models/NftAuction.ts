@@ -5,14 +5,33 @@ interface Auction {
   auction_startdate: string;
   auction_enddate: string;
   status: string;
+  auction_index: number;
+  auction_minimum_bid_price: number;
+  auction_token_index: number;
 }
 
 export const createAuction = async (auction: Auction) => {
   try {
-    const { nft_id, auction_startdate, auction_enddate, status } = auction;
+    const {
+      nft_id,
+      auction_startdate,
+      auction_enddate,
+      status,
+      auction_index,
+      auction_minimum_bid_price,
+      auction_token_index,
+    } = auction;
     const result = await query(
-      "INSERT INTO nftauction(nft_id, auction_startdate, auction_enddate, status) VALUES($1, $2, $3, $4) RETURNING *",
-      [nft_id, auction_startdate, auction_enddate, status]
+      "INSERT INTO nftauction(nft_id, auction_startdate, auction_enddate, status, auction_index, auction_minimum_bid_price, auction_token_index) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+      [
+        nft_id,
+        auction_startdate,
+        auction_enddate,
+        status,
+        auction_index,
+        auction_minimum_bid_price,
+        auction_token_index,
+      ]
     );
     return result.rows[0];
   } catch (err) {
@@ -41,10 +60,27 @@ export const readAuction = async (id: number) => {
 
 export const updateAuction = async (id: number, updates: Partial<Auction>) => {
   try {
-    const { nft_id, auction_startdate, auction_enddate, status } = updates;
+    const {
+      nft_id,
+      auction_startdate,
+      auction_enddate,
+      status,
+      auction_index,
+      auction_minimum_bid_price,
+      auction_token_index,
+    } = updates;
     const result = await query(
-      "UPDATE nftauction SET nft_id=$1, auction_startdate=$2, auction_enddate=$3, status=$4 WHERE id=$5 RETURNING *",
-      [nft_id, auction_startdate, auction_enddate, status, id]
+      "UPDATE nftauction SET nft_id=$1, auction_startdate=$2, auction_enddate=$3, status=$4, auction_index=$5, auction_minimum_bid_price=$6, auction_token_index=$7 WHERE id=$8 RETURNING *",
+      [
+        nft_id,
+        auction_startdate,
+        auction_enddate,
+        status,
+        auction_index,
+        auction_minimum_bid_price,
+        auction_token_index,
+        id,
+      ]
     );
     return result.rows[0];
   } catch (err) {

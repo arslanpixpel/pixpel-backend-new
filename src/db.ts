@@ -180,7 +180,7 @@ createTable(
 
 createTable(
   "nftauction",
-  "id SERIAL PRIMARY KEY, nft_id INTEGER NOT NULL REFERENCES nfts(id), auction_startdate TEXT NOT NULL, auction_enddate TEXT NOT NULL, status TEXT NOT NULL"
+  "id SERIAL PRIMARY KEY, nft_id INTEGER NOT NULL REFERENCES nfts(id), auction_startdate TEXT NOT NULL, auction_enddate TEXT NOT NULL, status TEXT NOT NULL, auction_index INTEGER NOT NULL, auction_minimum_bid_price INTEGER NOT NULL, auction_token_index INTEGER NOT NULL"
 );
 
 createTable(
