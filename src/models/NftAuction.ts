@@ -6,8 +6,8 @@ interface Auction {
   auction_enddate: string;
   status: string;
   auction_index: number;
-  auction_minimum_bid_price: number;
-  auction_token_index: number;
+  auction_minimum_bid_price: string;
+  auction_token_index: string;
 }
 
 export const createAuction = async (auction: Auction) => {
