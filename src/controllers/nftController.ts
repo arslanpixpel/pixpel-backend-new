@@ -28,10 +28,16 @@ export const createNft = async (
       reselling_price: 0,
       reselling_listingid: 0,
     };
-
-    const listnft = await NftMarket.createNftMarket(listnftpaytload);
-    const nftcompelted = { nft, listnft };
-    handleCreateResponse(res, nftcompelted, successMessage, errorMessage);
+    if (nft.blockchain === "Concordium") {
+      const listnft = await NftMarket.createNftMarket(listnftpaytload);
+      const nftcompelted = { nft, listnft };
+      handleCreateResponse(res, nftcompelted, successMessage, errorMessage);
+    } else {
+      if (nft.open_auction.price > 0) {
+        const nftcompelted = { nft };
+        handleCreateResponse(res, nftcompelted, successMessage, errorMessage);
+      }
+    }
   } catch (err) {
     handleError(err, res);
   }
