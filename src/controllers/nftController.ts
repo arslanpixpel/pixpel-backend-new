@@ -37,6 +37,9 @@ export const createNft = async (
         const nftcompelted = { nft };
         handleCreateResponse(res, nftcompelted, successMessage, errorMessage);
       }
+      const listnft = await NftMarket.createNftMarket(listnftpaytload);
+      const nftcompelted = { nft, listnft };
+      handleCreateResponse(res, nftcompelted, successMessage, errorMessage);
     }
   } catch (err) {
     handleError(err, res);
