@@ -12,6 +12,7 @@ import {
 } from "../helper/Responses";
 import * as NftMarket from "../models/NftMarket";
 import { createTransaction } from "../models/NfTransection";
+import { createAuction } from "../models/NftAuction";
 
 export const createNft = async (
   req: express.Request,
@@ -34,12 +35,23 @@ export const createNft = async (
       handleCreateResponse(res, nftcompelted, successMessage, errorMessage);
     } else {
       if (nft.open_auction.price > 0) {
-        const nftcompelted = { nft };
+        const payload = {
+          nft_id: nft.id,
+          auction_startdate: new Date(),
+          auction_enddate: nft.open_auction.duration_hours,
+          status: "active",
+          auction_index: req.body.auction_index,
+          auction_minimum_bid_price: nft.open_auction.price,
+          auction_token_index: nft.token_id,
+        };
+        const auction = await createAuction(payload as any);
+        const nftcompelted = { nft, auction };
+        handleCreateResponse(res, nftcompelted, successMessage, errorMessage);
+      } else {
+        const listnft = await NftMarket.createNftMarket(listnftpaytload);
+        const nftcompelted = { nft, listnft };
         handleCreateResponse(res, nftcompelted, successMessage, errorMessage);
       }
-      const listnft = await NftMarket.createNftMarket(listnftpaytload);
-      const nftcompelted = { nft, listnft };
-      handleCreateResponse(res, nftcompelted, successMessage, errorMessage);
     }
   } catch (err) {
     handleError(err, res);
