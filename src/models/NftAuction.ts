@@ -58,30 +58,50 @@ export const readAuction = async (id: number) => {
   }
 };
 
+// export const updateAuction = async (id: number, updates: Partial<Auction>) => {
+//   try {
+//     const {
+//       nft_id,
+//       auction_startdate,
+//       auction_enddate,
+//       status,
+//       auction_index,
+//       auction_minimum_bid_price,
+//       auction_token_index,
+//     } = updates;
+//     const result = await query(
+//       "UPDATE nftauction SET nft_id=$1, auction_startdate=$2, auction_enddate=$3, status=$4, auction_index=$5, auction_minimum_bid_price=$6, auction_token_index=$7 WHERE id=$8 RETURNING *",
+//       [
+//         nft_id,
+//         auction_startdate,
+//         auction_enddate,
+//         status,
+//         auction_index,
+//         auction_minimum_bid_price,
+//         auction_token_index,
+//         id,
+//       ]
+//     );
+//     return result.rows[0];
+//   } catch (err) {
+//     const error = err as Error;
+//     throw error;
+//   }
+// };
+
 export const updateAuction = async (id: number, updates: Partial<Auction>) => {
   try {
-    const {
-      nft_id,
-      auction_startdate,
-      auction_enddate,
-      status,
-      auction_index,
-      auction_minimum_bid_price,
-      auction_token_index,
-    } = updates;
+    const setClause = Object.keys(updates)
+      .map((key, index) => `${key}=$${index + 1}`)
+      .join(", ");
+    const values = Object.values(updates);
+    values.push(id); // Add the id at the end for WHERE clause
+
     const result = await query(
-      "UPDATE nftauction SET nft_id=$1, auction_startdate=$2, auction_enddate=$3, status=$4, auction_index=$5, auction_minimum_bid_price=$6, auction_token_index=$7 WHERE id=$8 RETURNING *",
-      [
-        nft_id,
-        auction_startdate,
-        auction_enddate,
-        status,
-        auction_index,
-        auction_minimum_bid_price,
-        auction_token_index,
-        id,
-      ]
+      `UPDATE nftauction SET ${setClause} WHERE id=$${values.length} RETURNING *`,
+      values
     );
+
     return result.rows[0];
   } catch (err) {
     const error = err as Error;
