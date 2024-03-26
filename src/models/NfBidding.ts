@@ -138,6 +138,7 @@ export const getAllBiddingsWinners = async () => {
           FROM nftbiding
           GROUP BY nftauction_id
         ) AS max_bids ON nftbiding.nftauction_id = max_bids.nftauction_id AND nftbiding.bidding_price = max_bids.max_bid_price
+        WHERE nftauction.status = 'finalized'
         ORDER BY nftauction.id
       `,
       []
