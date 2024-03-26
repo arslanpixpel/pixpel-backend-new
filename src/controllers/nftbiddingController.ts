@@ -103,3 +103,15 @@ export const getAllBiddingsWinnerByAuction = async (
     handleError(err, res);
   }
 };
+
+export const getAllBiddingsWinners = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const biddings = await Bidding.getAllBiddingsWinners();
+    handleReadResponse(res, biddings, successMessage, errorMessage);
+  } catch (err) {
+    handleError(err, res);
+  }
+};

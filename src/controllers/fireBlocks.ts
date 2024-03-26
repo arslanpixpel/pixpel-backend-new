@@ -42,7 +42,7 @@ const initializeFireblocksProvider = (vaultAccountId: any) => {
   return new FireblocksWeb3Provider({
     privateKey: apiSecret,
     apiKey: apiKey,
-    vaultAccountIds: vaultAccountId,
+    vaultAccountIds: [vaultAccountId],
     chainId: ChainId.POLYGON_TEST,
     rpcUrl: "https://polygon-testnet.public.blastapi.io",
     apiBaseUrl: ApiBaseUrl.Sandbox,

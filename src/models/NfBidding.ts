@@ -124,3 +124,27 @@ export const getAllBiddingsWinnerByAuction = async (nftauction_id: number) => {
     throw error;
   }
 };
+
+export const getAllBiddingsWinners = async () => {
+  try {
+    const result = await query(
+      `
+        SELECT nftbiding.*, nftauction.id AS auction_id, nftauction.*, nfts.*, max_bids.max_bid_price
+        FROM nftbiding
+        INNER JOIN nftauction ON nftbiding.nftauction_id = nftauction.id
+        INNER JOIN nfts ON nftauction.nft_id = nfts.id
+        INNER JOIN (
+          SELECT nftauction_id, MAX(bidding_price) AS max_bid_price
+          FROM nftbiding
+          GROUP BY nftauction_id
+        ) AS max_bids ON nftbiding.nftauction_id = max_bids.nftauction_id AND nftbiding.bidding_price = max_bids.max_bid_price
+        ORDER BY nftauction.id
+      `,
+      []
+    );
+    return result.rows;
+  } catch (err) {
+    const error = err as Error;
+    throw error;
+  }
+};

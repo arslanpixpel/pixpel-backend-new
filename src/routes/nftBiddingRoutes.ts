@@ -16,5 +16,9 @@ router.get(
   "/getAllBiddingsWinnerByAuction/:id",
   biddingController.getAllBiddingsWinnerByAuction
 );
+router.get(
+  "/getAllBiddingsWinners",
+  biddingController.getAllBiddingsWinners
+);
 
 export default router;
