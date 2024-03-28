@@ -3,8 +3,8 @@ import { Pool } from "pg";
 const pool = new Pool({
   user: "postgres",
   host: "127.0.0.1",
-  database: "Pixpel-backend",
-  // database: "postgres",
+  // database: "Pixpel-backend",
+  database: "postgres",
   password: "ubuntu",
   port: 5432,
 });
@@ -243,6 +243,16 @@ createTable(
 createTable(
   "game_dashboard",
   "id SERIAL PRIMARY KEY, title_1 TEXT NOT NULL, title_2 TEXT NOT NULL, para_1 TEXT NOT NULL, para_2 TEXT NOT NULL, banner_image_1 TEXT NOT NULL, banner_image_2 TEXT NOT NULL, banner_image_3 TEXT NOT NULL, team_members JSONB[], developer_id INTEGER NOT NULL, developer_wallet TEXT NOT NULL, pixpel_studio_heading TEXT, pixpel_para1 TEXT, pixpel_para2 TEXT"
+);
+
+createTable(
+  "p2p_profile_player",
+  "id SERIAL PRIMARY KEY, player_id INTEGER REFERENCES players(id), full_name TEXT NOT NULL, bank_account_number bigint NOT NULL, bank_name TEXT NOT NULL, payment_method TEXT NOT NULL"
+);
+
+createTable(
+  "p2p_profile_developer",
+  "id SERIAL PRIMARY KEY, developer_id INTEGER REFERENCES developers(id), full_name TEXT NOT NULL, bank_account_number bigint NOT NULL, bank_name TEXT NOT NULL, payment_method TEXT NOT NULL"
 );
 
 export const query = (text: string, params: any[]) => pool.query(text, params);
