@@ -647,6 +647,8 @@ export const createVaultAccountWithAsset = async (
       vaultAccount: vaultAccount,
       vaultAsset: vaultAsset,
       createTransaction: createTransaction,
+      vault_account_address: vaultAsset.address,
+      vault_account_id: vaultAccount.id,
     });
   } catch (err) {
     handleError(err, res);
