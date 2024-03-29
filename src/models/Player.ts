@@ -1,5 +1,6 @@
 import { query } from "../db";
 import bcrypt from "bcrypt";
+import { v4 as uuidv4 } from "uuid";
 
 interface Player {
   name: string;
@@ -170,6 +171,7 @@ export const signupPlayer = async (player: {
   percentage: string;
   shareHolders: string;
   zetawallet: string;
+  player_id: string;
 }) => {
   try {
     const {
@@ -189,8 +191,9 @@ export const signupPlayer = async (player: {
       zetawallet,
     } = player;
     const hashedPassword = await bcrypt.hash(password, 10);
+    const player_id = uuidv4();
     const result = await query(
-      "INSERT INTO players(name, email, wallet, contact_details, password, img, address, country, launchedAtPixpel, legalName, perPercentage, percentage, shareHolders, zetawallet) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *",
+      "INSERT INTO players(name, email, wallet, contact_details, password, img, address, country, launchedAtPixpel, legalName, perPercentage, percentage, shareHolders, zetawallet, player_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING *",
       [
         name,
         email.toLowerCase(),
@@ -206,6 +209,7 @@ export const signupPlayer = async (player: {
         percentage,
         shareHolders,
         zetawallet,
+        player_id,
       ]
     );
     return result.rows[0];

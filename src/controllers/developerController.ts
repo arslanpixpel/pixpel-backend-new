@@ -150,7 +150,7 @@ export const signinDeveloper = async (
     if (developer) {
       // Generate JWT token
       const token = jwt.sign(
-        { userId: developer.id, email: developer.email },
+        { userId: developer.id, email: developer.email, role: "developer" },
         secretKey,
         { expiresIn: "1d" } // You can adjust the expiration time
       );

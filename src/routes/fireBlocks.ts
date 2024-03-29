@@ -27,5 +27,9 @@ router.post("/generateJwtToken", fireBlocks.generateJwtToken);
 router.post("/createAuction", fireBlocks.createAuction);
 router.post("/placeBid", fireBlocks.placeBid);
 router.post("/endAuction", fireBlocks.endAuction);
+router.post(
+  "/createVaultAccountWithAsset",
+  fireBlocks.createVaultAccountWithAsset
+);
 
 export default router;

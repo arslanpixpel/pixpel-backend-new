@@ -121,7 +121,7 @@ export const signupPlayer = async (
   try {
     const player = await Player.signupPlayer(req.body);
     const token = jwt.sign(
-      { userId: player.id, email: player.email },
+      { userId: player.id, email: player.email, role: "player" },
       process.env.JWT_KEY,
       { expiresIn: "1d" } // You can adjust the expiration time
     );
@@ -175,7 +175,7 @@ export const signinPlayer = async (
     if (player) {
       // Generate JWT token
       const token = jwt.sign(
-        { userId: player.id, email: player.email },
+        { userId: player.id, email: player.email, role: "player" },
         process.env.JWT_KEY,
         { expiresIn: "2d" } // Expires in 2 days
       );

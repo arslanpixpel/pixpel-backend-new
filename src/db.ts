@@ -3,8 +3,8 @@ import { Pool } from "pg";
 const pool = new Pool({
   user: "postgres",
   host: "127.0.0.1",
-  database: "Pixpel-backend",
-  // database: "postgres",
+  // database: "Pixpel-backend",
+  database: "postgres",
   password: "ubuntu",
   port: 5432,
 });
@@ -45,7 +45,8 @@ createTable(
   perPercentage TEXT DEFAULT NULL,
   percentage TEXT DEFAULT NULL,
   shareHolders TEXT DEFAULT NULL,
-  zetawallet TEXT DEFAULT NULL
+  zetawallet TEXT DEFAULT NULL,
+  player_id TEXT DEFAULT NULL
   `
 );
 
@@ -123,7 +124,8 @@ createTable(
   perPercentage TEXT DEFAULT NULL,
   percentage TEXT DEFAULT NULL,
   shareHolders TEXT DEFAULT NULL,
-  zetawallet TEXT DEFAULT NULL
+  zetawallet TEXT DEFAULT NULL,
+  developer_id TEXT DEFAULT NULL
   `
 );
 // createTable(

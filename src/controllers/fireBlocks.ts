@@ -4,6 +4,7 @@ import {
   PeerType,
   FeeLevel,
   TransactionArguments,
+  TransactionOperation,
 } from "fireblocks-sdk";
 import { handleError, handleReadResponse } from "../helper/Responses";
 import {
@@ -53,6 +54,7 @@ const initializeFireblocksProvider = (vaultAccountId: any) => {
     oneTimeAddressesEnabled: true,
   });
 };
+
 export const createVaultAccount = async (
   req: express.Request,
   res: express.Response
@@ -61,7 +63,7 @@ export const createVaultAccount = async (
     const { name } = req.body;
     // console.log(name, "name");
     const vaultAccount = await fireblocks.createVaultAccount(name);
-    console.log(vaultAccount, "accounts");
+    // console.log(vaultAccount, "accounts");
     res.status(200).send({
       message: "Created createVaultAccount successfully",
       data: vaultAccount,
@@ -169,8 +171,8 @@ export const createTransaction = async (
       message: "Transaction created successfully",
       data: result,
     });
-  } catch (err) {
-    handleError(err, res);
+  } catch (error) {
+    handleError(error, res);
   }
 };
 
@@ -210,9 +212,7 @@ export const getTotalSupply = async (
 ) => {
   try {
     const { vaultAccountId } = req.params;
-    const eip1193Provider = initializeFireblocksProvider(
-      Number(vaultAccountId)
-    );
+    const eip1193Provider = initializeFireblocksProvider(vaultAccountId);
     console.log(vaultAccountId, "Provider");
     const provider = new ethers.providers.Web3Provider(eip1193Provider);
     console.log("getTotalSupply");
@@ -290,7 +290,9 @@ export const createCollection = async (
 ) => {
   try {
     const { name, symbol, vaultAccountId } = req.body;
-    const eip1193Provider = initializeFireblocksProvider(vaultAccountId);
+    const eip1193Provider = initializeFireblocksProvider(
+      Number(vaultAccountId)
+    );
     const provider = new ethers.providers.Web3Provider(eip1193Provider);
     const gasPrice = await provider.getGasPrice();
     const myContract = new ethers.Contract(
@@ -319,8 +321,8 @@ export const mintNft = async (req: express.Request, res: express.Response) => {
     const { collectionAddress, to, vaultAccountId } = req.body;
     const eip1193Provider = initializeFireblocksProvider(vaultAccountId);
     const provider = new ethers.providers.Web3Provider(eip1193Provider);
-    console.log(provider, "Providers");
     const gasPrice = await provider.getGasPrice();
+    console.log("🚀 ~ mintNft ~ gasPrice:", gasPrice);
     const myContract = new ethers.Contract(
       collectionAddress,
       CollectionABI,
@@ -609,6 +611,42 @@ export const createNonCustodialWallet = async (
     res.status(200).send({
       message: "Created non-custodial wallet successfully",
       data: newWallet,
+    });
+  } catch (err) {
+    handleError(err, res);
+  }
+};
+
+export const createVaultAccountWithAsset = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { name, assetId, srcId, amount, note } = req.body;
+    const vaultAccount = await fireblocks.createVaultAccount(name);
+    const vaultAsset = await fireblocks.createVaultAsset(
+      vaultAccount.id,
+      assetId
+    );
+    const payload: TransactionArguments = {
+      assetId: assetId,
+      source: { type: PeerType.VAULT_ACCOUNT, id: srcId || 0 },
+      destination: {
+        type: PeerType.ONE_TIME_ADDRESS,
+        oneTimeAddress: {
+          address: vaultAsset.address,
+        },
+      },
+      amount: amount.toString(),
+      note: note || "Created by fireblocks SDK",
+    };
+    const createTransaction = await fireblocks.createTransaction(payload);
+    res.status(200).send({
+      message:
+        "Vault account, vault asset, and transaction created successfully.",
+      vaultAccount: vaultAccount,
+      vaultAsset: vaultAsset,
+      createTransaction: createTransaction,
     });
   } catch (err) {
     handleError(err, res);

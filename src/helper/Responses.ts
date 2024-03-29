@@ -11,13 +11,11 @@ export const handleCreateResponse = (
   errorMessage: string
 ) => {
   if (createdObject) {
-    res
-      .status(201)
-      .send({
-        message: successMessage,
-        data: `Created object with _id: ${createdObject.id}`,
-        responce: createdObject,
-      });
+    res.status(201).send({
+      message: successMessage,
+      data: `Created object with _id: ${createdObject.id}`,
+      responce: createdObject,
+    });
   } else {
     res.status(500).send({ error: errorMessage });
   }
@@ -56,12 +54,10 @@ export const handleDeleteResponse = (
   error: string
 ) => {
   if (deletedCount > 0) {
-    res
-      .status(200)
-      .send({
-        message: successMessage,
-        data: `Deleted ${deletedCount} developers.`,
-      });
+    res.status(200).send({
+      message: successMessage,
+      data: `Deleted ${deletedCount} developers.`,
+    });
   } else {
     res.status(404).send({ error: error });
   }
