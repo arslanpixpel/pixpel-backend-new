@@ -46,7 +46,7 @@ createTable(
   percentage TEXT DEFAULT NULL,
   shareHolders TEXT DEFAULT NULL,
   zetawallet TEXT DEFAULT NULL,
-  player_id TEXT DEFAULT NULL
+  player_id TEXT DEFAULT NULL UNIQUE
   `
 );
 
@@ -125,7 +125,7 @@ createTable(
   percentage TEXT DEFAULT NULL,
   shareHolders TEXT DEFAULT NULL,
   zetawallet TEXT DEFAULT NULL,
-  developer_id TEXT DEFAULT NULL
+  developer_id TEXT DEFAULT NULL UNIQUE
   `
 );
 // createTable(
@@ -249,12 +249,12 @@ createTable(
 
 createTable(
   "p2p_profile_player",
-  "id SERIAL PRIMARY KEY, player_id INTEGER REFERENCES players(id), full_name TEXT NOT NULL, bank_account_number bigint NOT NULL, bank_name TEXT NOT NULL, payment_method TEXT NOT NULL"
+  "id SERIAL PRIMARY KEY, player_id TEXT REFERENCES players(player_id), full_name TEXT NOT NULL, bank_account_number BIGINT NOT NULL, bank_name TEXT NOT NULL, payment_method TEXT NOT NULL"
 );
 
 createTable(
   "p2p_profile_developer",
-  "id SERIAL PRIMARY KEY, developer_id INTEGER REFERENCES developers(id), full_name TEXT NOT NULL, bank_account_number bigint NOT NULL, bank_name TEXT NOT NULL, payment_method TEXT NOT NULL"
+  "id SERIAL PRIMARY KEY, developer_id TEXT REFERENCES developers(developer_id), full_name TEXT NOT NULL, bank_account_number bigint NOT NULL, bank_name TEXT NOT NULL, payment_method TEXT NOT NULL"
 );
 
 export const query = (text: string, params: any[]) => pool.query(text, params);

@@ -155,9 +155,25 @@ export const getP2PProfileByRefId = async (role: string, refId: number) => {
       throw new Error("Invalid role provided");
     }
 
-    const queryText = `SELECT * FROM ${tableName} WHERE ${refColumn} = $1`;
-    const result = await query(queryText, [refId]);
-    return result.rows[0];
+    if (role === "player") {
+      const queryText = `
+      SELECT * 
+      FROM ${tableName}
+      INNER JOIN players ON ${tableName}.${refColumn} = players.id
+      WHERE ${tableName}.${refColumn} = $1;
+      `;
+      const result = await query(queryText, [refId]);
+      return result.rows[0];
+    } else {
+      const queryText = `
+      SELECT * 
+      FROM ${tableName}
+      INNER JOIN developers ON ${tableName}.${refColumn} = developers.id
+      WHERE ${tableName}.${refColumn} = $1;
+      `;
+      const result = await query(queryText, [refId]);
+      return result.rows[0];
+    }
   } catch (err) {
     throw err;
   }

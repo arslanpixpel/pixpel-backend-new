@@ -10,7 +10,7 @@ const emailTransporter = nodemailer.createTransport({
     // user: 'arslandev170@gmail.com',
     // pass: 'uevf bgmr efwc oczz',
     user: "support@pixpel.io",
-    pass: "rbhh prlv qrdi mykh",
+    pass: "cesj qznk dkas ofmh",
   },
 });
 
