@@ -622,31 +622,17 @@ export const createVaultAccountWithAsset = async (
   res: express.Response
 ) => {
   try {
-    const { name, assetId, srcId, amount, note } = req.body;
+    const { name, assetId } = req.body;
     const vaultAccount = await fireblocks.createVaultAccount(name);
     const vaultAsset = await fireblocks.createVaultAsset(
       vaultAccount.id,
       assetId
     );
-    const payload: TransactionArguments = {
-      assetId: assetId,
-      source: { type: PeerType.VAULT_ACCOUNT, id: srcId || 0 },
-      destination: {
-        type: PeerType.ONE_TIME_ADDRESS,
-        oneTimeAddress: {
-          address: vaultAsset.address,
-        },
-      },
-      amount: amount.toString(),
-      note: note || "Created by fireblocks SDK",
-    };
-    const createTransaction = await fireblocks.createTransaction(payload);
     res.status(200).send({
       message:
         "Vault account, vault asset, and transaction created successfully.",
       vaultAccount: vaultAccount,
       vaultAsset: vaultAsset,
-      createTransaction: createTransaction,
       vault_account_address: vaultAsset.address,
       vault_account_id: vaultAccount.id,
     });

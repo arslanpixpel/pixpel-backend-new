@@ -9,6 +9,15 @@ const pool = new Pool({
   port: 5432,
 });
 
+// const pool = new Pool({
+//   user: "postgres",
+//   host: "127.0.0.1",
+//   // database: "Pixpel-backend",
+//   database: "postgres",
+//   password: "zain1234",
+//   port: 5432,
+// });
+
 const createTable = async (tableName: string, columns: string) => {
   const result = await pool.query(
     `
