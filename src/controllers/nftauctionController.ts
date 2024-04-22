@@ -87,3 +87,15 @@ export const getAllAuctionsByNft = async (
     handleError(err, res);
   }
 };
+
+export const auctionResell = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const auctions = await Auction.getAllAuctionsByNft(parseInt(req.params.id));
+    handleReadResponse(res, auctions, successMessage, errorMessage);
+  } catch (err) {
+    handleError(err, res);
+  }
+};

@@ -18,6 +18,8 @@ interface Player {
   perPercentage: string;
   percentage: string;
   shareHolders: string;
+  fireblocks_account_address: string;
+  fireblocks_account_id: string;
 }
 
 export const readPlayer = async (id: number) => {
@@ -172,6 +174,8 @@ export const signupPlayer = async (player: {
   shareHolders: string;
   zetawallet: string;
   player_id: string;
+  fireblocks_account_address: string;
+  fireblocks_account_id: string;
 }) => {
   try {
     const {
@@ -189,11 +193,13 @@ export const signupPlayer = async (player: {
       percentage,
       shareHolders,
       zetawallet,
+      fireblocks_account_address,
+      fireblocks_account_id,
     } = player;
     const hashedPassword = await bcrypt.hash(password, 10);
     const player_id = uuidv4();
     const result = await query(
-      "INSERT INTO players(name, email, wallet, contact_details, password, img, address, country, launchedAtPixpel, legalName, perPercentage, percentage, shareHolders, zetawallet, player_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING *",
+      "INSERT INTO players(name, email, wallet, contact_details, password, img, address, country, launchedAtPixpel, legalName, perPercentage, percentage, shareHolders, zetawallet, player_id, fireblocks_account_address, fireblocks_account_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) RETURNING *",
       [
         name,
         email.toLowerCase(),
@@ -210,6 +216,8 @@ export const signupPlayer = async (player: {
         shareHolders,
         zetawallet,
         player_id,
+        fireblocks_account_address,
+        fireblocks_account_id,
       ]
     );
     return result.rows[0];

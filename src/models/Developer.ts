@@ -18,6 +18,8 @@ interface Developer {
   percentage: string;
   shareHolders: string;
   zetawallet: string;
+  fireblocks_account_address: string;
+  fireblocks_account_id: string;
 }
 
 export const readDeveloper = async (id: number) => {
@@ -174,11 +176,13 @@ export const signupDeveloper = async (developer: Developer) => {
       percentage,
       shareHolders,
       zetawallet,
+      fireblocks_account_address,
+      fireblocks_account_id,
     } = developer;
     const hashedPassword = await bcrypt.hash(password, 10);
     const developer_id = uuidv4();
     const result = await query(
-      "INSERT INTO developers(name, email, wallet, contact_details, password, img, address, country, launchedAtPixpel, legalName, perPercentage, percentage, shareHolders, zetawallet, developer_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING *",
+      "INSERT INTO developers(name, email, wallet, contact_details, password, img, address, country, launchedAtPixpel, legalName, perPercentage, percentage, shareHolders, zetawallet, developer_id, fireblocks_account_address, fireblocks_account_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) RETURNING *",
       [
         name,
         email.toLowerCase(),
@@ -195,6 +199,8 @@ export const signupDeveloper = async (developer: Developer) => {
         shareHolders,
         zetawallet,
         developer_id,
+        fireblocks_account_address,
+        fireblocks_account_id,
       ]
     );
     return result.rows[0];
