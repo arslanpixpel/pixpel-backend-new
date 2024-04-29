@@ -22,7 +22,8 @@ import * as ethers from "ethers";
 const apiSecret = process.env.SECRET_KEY || "";
 const apiKey = process.env.API_KEY || "";
 // Choose the right api url for your workspace type
-const baseUrl = "https://sandbox-api.fireblocks.io";
+// const baseUrl = "https://sandbox-api.fireblocks.io/v1";
+const baseUrl = "https://api.fireblocks.io/v1";
 const fireblocks = new FireblocksSDK(apiSecret, apiKey, baseUrl);
 
 // const eip1193Provider = new FireblocksWeb3Provider({
@@ -46,7 +47,7 @@ const initializeFireblocksProvider = (vaultAccountId: any) => {
     vaultAccountIds: [vaultAccountId],
     chainId: ChainId.POLYGON_AMOY,
     rpcUrl: "https://rpc-amoy.polygon.technology",
-    apiBaseUrl: ApiBaseUrl.Sandbox,
+    apiBaseUrl: ApiBaseUrl.Production,
     logTransactionStatusChanges: true,
     enhancedErrorHandling: true,
     fallbackFeeLevel: FeeLevel.MEDIUM,
@@ -61,6 +62,7 @@ export const createVaultAccount = async (
 ) => {
   try {
     const { name } = req.body;
+    console.log("🚀 ~ req:", req.body);
     // console.log(name, "name");
     const vaultAccount = await fireblocks.createVaultAccount(name);
     // console.log(vaultAccount, "accounts");
@@ -579,7 +581,7 @@ export const generateJwtToken = async (
 ) => {
   try {
     const payload = {
-      uri: "https://sandbox-api.fireblocks.io/v1/ncw/wallets", // Replace with the appropriate endpoint
+      uri: baseUrl, // Replace with the appropriate endpoint
       nonce: Math.floor(Math.random() * 1000000), // Generate a random nonce
       iat: Math.floor(Date.now() / 1000), // Current time in seconds since Epoch
       exp: Math.floor(Date.now() / 1000) + 30, // Expiration time (iat + 30 seconds)
