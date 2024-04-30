@@ -62,6 +62,31 @@ createTable(
 );
 
 createTable(
+  "developers",
+  `
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
+  wallet TEXT NOT NULL,
+  contact_details BIGINT NULL,
+  password TEXT NOT NULL,
+  verified BOOLEAN DEFAULT FALSE NOT NULL,
+  img TEXT DEFAULT NULL,
+  address TEXT DEFAULT NULL,
+  dateOfLaunch DATE DEFAULT CURRENT_DATE NOT NULL,
+  country TEXT DEFAULT NULL,
+  launchedAtPixpel TEXT DEFAULT 'No',
+  legalName TEXT DEFAULT NULL,
+  perPercentage TEXT DEFAULT NULL,
+  percentage TEXT DEFAULT NULL,
+  shareHolders TEXT DEFAULT NULL,
+  zetawallet TEXT DEFAULT NULL,
+  developer_id TEXT DEFAULT NULL UNIQUE,
+  fireblocks_account_address TEXT DEFAULT NULL,
+  fireblocks_account_id TEXT DEFAULT NULL,
+  `
+);
+createTable(
   "rockets",
   `
   id SERIAL PRIMARY KEY,
@@ -116,31 +141,6 @@ createTable(
   `
 );
 
-createTable(
-  "developers",
-  `
-  id SERIAL PRIMARY KEY,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL UNIQUE,
-  wallet TEXT NOT NULL,
-  contact_details BIGINT NULL,
-  password TEXT NOT NULL,
-  verified BOOLEAN DEFAULT FALSE NOT NULL,
-  img TEXT DEFAULT NULL,
-  address TEXT DEFAULT NULL,
-  dateOfLaunch DATE DEFAULT CURRENT_DATE NOT NULL,
-  country TEXT DEFAULT NULL,
-  launchedAtPixpel TEXT DEFAULT 'No',
-  legalName TEXT DEFAULT NULL,
-  perPercentage TEXT DEFAULT NULL,
-  percentage TEXT DEFAULT NULL,
-  shareHolders TEXT DEFAULT NULL,
-  zetawallet TEXT DEFAULT NULL,
-  developer_id TEXT DEFAULT NULL UNIQUE,
-  fireblocks_account_address TEXT DEFAULT NULL,
-  fireblocks_account_id TEXT DEFAULT NULL,
-  `
-);
 // createTable(
 //   "collections",
 //   "id SERIAL PRIMARY KEY, developer_id INTEGER NOT NULL REFERENCES developers(id), name TEXT NOT NULL"
