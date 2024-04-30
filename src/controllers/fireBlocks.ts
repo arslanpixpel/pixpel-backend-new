@@ -18,12 +18,20 @@ import CollectionABI from "../smart-contract/Collection.json";
 const jwt = require("jsonwebtoken");
 import crypto from "crypto";
 import * as ethers from "ethers";
+import axios from "axios";
 
 const apiSecret = process.env.SECRET_KEY || "";
 const apiKey = process.env.API_KEY || "";
+
 // Choose the right api url for your workspace type
 // const baseUrl = "https://sandbox-api.fireblocks.io/v1";
 const baseUrl = "https://api.fireblocks.io/v1";
+const fireblocksInstance = axios.create({
+  baseURL: baseUrl,
+  headers: {
+    "X-Api-Key": apiKey,
+  },
+});
 const fireblocks = new FireblocksSDK(apiSecret, apiKey, baseUrl);
 
 // const eip1193Provider = new FireblocksWeb3Provider({
@@ -39,6 +47,22 @@ const fireblocks = new FireblocksSDK(apiSecret, apiKey, baseUrl);
 //   pollingInterval: 1000,
 //   oneTimeAddressesEnabled: true,
 // });
+
+function generateFireblocksJwt(url: string, body: any) {
+  const payload = {
+    uri: "/v1" + url, // Replace with the appropriate endpoint
+    nonce: Math.floor(Math.random() * 1000000), // Generate a random nonce
+    iat: Math.floor(Date.now() / 1000), // Current time in seconds since Epoch
+    exp: Math.floor(Date.now() / 1000) + 30, // Expiration time (iat + 30 seconds)
+    sub: apiKey,
+    bodyHash: crypto
+      .createHash("sha256")
+      .update(JSON.stringify(body))
+      .digest("hex"),
+  };
+  const token = jwt.sign(payload, apiSecret, { algorithm: "RS256" });
+  return token;
+}
 
 const initializeFireblocksProvider = (vaultAccountId: any) => {
   return new FireblocksWeb3Provider({
@@ -56,6 +80,31 @@ const initializeFireblocksProvider = (vaultAccountId: any) => {
   });
 };
 
+async function fireBlocksReqHelper(
+  url: string,
+  body: any,
+  method: "get" | "post" | "put" | "delete"
+) {
+  const jwtToken = await generateFireblocksJwt(url, body);
+  let data;
+  if (method == "get") {
+    const { data: newData } = await fireblocksInstance[method](url, {
+      headers: {
+        Authorization: "Bearer " + jwtToken,
+      },
+    });
+    data = newData;
+  } else {
+    const { data: newData } = await fireblocksInstance[method](url, body, {
+      headers: {
+        Authorization: "Bearer " + jwtToken,
+      },
+    });
+    data = newData;
+  }
+  return data;
+}
+
 export const createVaultAccount = async (
   req: express.Request,
   res: express.Response
@@ -64,13 +113,27 @@ export const createVaultAccount = async (
     const { name } = req.body;
     console.log("🚀 ~ req:", req.body);
     // console.log(name, "name");
-    const vaultAccount = await fireblocks.createVaultAccount(name);
+    const jwtToken = await generateFireblocksJwt("/vault/accounts", {
+      name,
+    });
+    const { data: vaultAccount } = await fireblocksInstance.post(
+      "/vault/accounts",
+      {
+        name,
+      },
+      {
+        headers: {
+          Authorization: "Bearer " + jwtToken,
+        },
+      }
+    );
     // console.log(vaultAccount, "accounts");
     res.status(200).send({
       message: "Created createVaultAccount successfully",
       data: vaultAccount,
     });
-  } catch (err) {
+  } catch (err: any) {
+    console.log(err?.response?.data || err?.message);
     handleError(err, res);
   }
 };
@@ -80,10 +143,15 @@ export const getVaultAccountsWithPageInfo = async (
   res: express.Response
 ) => {
   try {
-    let pagedFilter = {};
-    const vaultAccounts = await fireblocks.getVaultAccountsWithPageInfo(
-      pagedFilter
+    const vaultAccounts = await fireBlocksReqHelper(
+      "/vault/accounts_paged",
+      {},
+      "get"
     );
+
+    // const vaultAccounts = await fireblocks.getVaultAccountsWithPageInfo(
+    //   pagedFilter
+    // );
 
     res.status(200).send({
       message: "Get Vault Accounts With PageInfo successfully",
@@ -100,10 +168,15 @@ export const getVaultAccountAsset = async (
 ) => {
   try {
     const { vaultAccountId, assetId } = req.body;
-    const vaultAsset = await fireblocks.getVaultAccountAsset(
-      vaultAccountId,
-      assetId
+    const vaultAsset = await fireBlocksReqHelper(
+      `/vault/accounts/${vaultAccountId}/${assetId}`,
+      {},
+      "get"
     );
+    // const vaultAsset = await fireblocks.getVaultAccountAsset(
+    //   vaultAccountId,
+    //   assetId
+    // );
     res.status(200).send({
       message: "Get Vault Account Asset successfully",
       data: vaultAsset,
@@ -119,15 +192,21 @@ export const createVaultAsset = async (
 ) => {
   try {
     const { vaultAccountId, assetId } = req.body;
-    const vaultAsset = await fireblocks.createVaultAsset(
-      vaultAccountId,
-      assetId
+    const vaultAsset = await fireBlocksReqHelper(
+      `/vault/accounts/${vaultAccountId}/${assetId}`,
+      {},
+      "post"
     );
+    // const vaultAsset = await fireblocks.createVaultAsset(
+    //   vaultAccountId,
+    //   assetId
+    // );
     res.status(200).send({
       message: "Create Vault Asset successfully",
       data: vaultAsset,
     });
   } catch (err) {
+    console.log(err);
     handleError(err, res);
   }
 };
@@ -137,7 +216,12 @@ export const getVaultAccountById = async (
   res: express.Response
 ) => {
   try {
-    const vaultAccount = await fireblocks.getVaultAccountById(req.params.id);
+    const vaultAccount = await fireBlocksReqHelper(
+      `/vault/accounts/${req.params.id}`,
+      {},
+      "get"
+    );
+    // const vaultAccount = await fireblocks.getVaultAccountById(req.params.id);
     res.status(200).send({
       message: "Get Vault Account By Id successfully",
       data: vaultAccount,
@@ -166,8 +250,10 @@ export const createTransaction = async (
       amount: amount.toString(),
       note: note || "Created by fireblocks SDK",
     };
+    const result = await fireBlocksReqHelper("/transactions", payload, "post");
+    console.log("🚀 ~ result:", result);
 
-    const result = await fireblocks.createTransaction(payload);
+    // const result = await fireblocks.createTransaction(payload);
 
     res.status(200).json({
       message: "Transaction created successfully",
@@ -183,7 +269,12 @@ export const getSupportedAssets = async (
   res: express.Response
 ) => {
   try {
-    const supportedAssets = await fireblocks.getSupportedAssets();
+    const supportedAssets = await fireBlocksReqHelper(
+      "/supported_assets",
+      {},
+      "get"
+    );
+    // const supportedAssets = await fireblocks.getSupportedAssets();
     res.status(200).json({
       message: "Get Supported Assets successfully",
       data: supportedAssets,
@@ -198,7 +289,12 @@ export const getExchangeAccounts = async (
   res: express.Response
 ) => {
   try {
-    const exchangeAccounts = await fireblocks.getExchangeAccounts();
+    const exchangeAccounts = await fireBlocksReqHelper(
+      "/exchange_accounts",
+      {},
+      "get"
+    );
+    // const exchangeAccounts = await fireblocks.getExchangeAccounts();
     res.status(200).json({
       message: "Get Exchange Accounts successfully",
       data: exchangeAccounts,
@@ -625,10 +721,21 @@ export const createVaultAccountWithAsset = async (
 ) => {
   try {
     const { name, assetId } = req.body;
-    const vaultAccount = await fireblocks.createVaultAccount(name);
-    const vaultAsset = await fireblocks.createVaultAsset(
-      vaultAccount.id,
-      assetId
+    console.log("🚀 ~ body:", req.body);
+    // const vaultAccount = await fireblocks.createVaultAccount(name);
+    // const vaultAsset = await fireblocks.createVaultAsset(
+    //   vaultAccount.id,
+    //   assetId
+    // );
+    const vaultAccount = await fireBlocksReqHelper(
+      "/vault/accounts",
+      { name: name },
+      "post"
+    );
+    const vaultAsset = await fireBlocksReqHelper(
+      `/vault/accounts/${vaultAccount.id}/${assetId}`,
+      {},
+      "post"
     );
     res.status(200).send({
       message:
@@ -637,6 +744,31 @@ export const createVaultAccountWithAsset = async (
       vaultAsset: vaultAsset,
       vault_account_address: vaultAsset.address,
       vault_account_id: vaultAccount.id,
+    });
+  } catch (err) {
+    handleError(err, res);
+  }
+};
+
+export const getTransactionById = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { txId } = req.body;
+    const transaction = await fireBlocksReqHelper(
+      `/transactions/${txId}`,
+      {},
+      "get"
+    );
+    res.status(200).send({
+      message: "Successfully get transaction",
+      destinationAddress: transaction.destinationAddress,
+      assetId: transaction.assetId,
+      source: transaction.source,
+      status: transaction.status,
+      subStatus: transaction.subStatus,
+      txnHash: transaction.txHash,
     });
   } catch (err) {
     handleError(err, res);

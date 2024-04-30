@@ -31,5 +31,6 @@ router.post(
   "/createVaultAccountWithAsset",
   fireBlocks.createVaultAccountWithAsset
 );
+router.get("/getTransactionById", fireBlocks.getTransactionById);
 
 export default router;
