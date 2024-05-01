@@ -304,6 +304,47 @@ export const getExchangeAccounts = async (
   }
 };
 
+export const getTransactions = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const getTransactions = await fireBlocksReqHelper(
+      "/transactions",
+      {},
+      "get"
+    );
+    res.status(200).json({
+      message: "Get All Transactions successfully",
+      data: getTransactions,
+    });
+  } catch (err) {
+    handleError(err, res);
+  }
+};
+
+export const getAllTransactionsById = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { id } = req.params;
+
+    const transactions = await fireBlocksReqHelper("/transactions", {}, "get");
+
+    const filteredTransactions = transactions.filter(
+      (transaction: any) => transaction.source.id === id
+    );
+
+    res.status(200).json({
+      message: "Get All Transactions By Id successfully",
+      data: filteredTransactions,
+    });
+  } catch (err) {
+    handleError(err, res);
+  }
+};
+
 export const getTotalSupply = async (
   req: express.Request,
   res: express.Response
