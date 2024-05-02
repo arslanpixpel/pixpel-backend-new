@@ -80,7 +80,7 @@ const initializeFireblocksProvider = (vaultAccountId: any) => {
   });
 };
 
-async function fireBlocksReqHelper(
+export async function fireBlocksReqHelper(
   url: string,
   body: any,
   method: "get" | "post" | "put" | "delete"
