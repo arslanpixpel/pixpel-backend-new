@@ -270,6 +270,11 @@ createTable(
   "id SERIAL PRIMARY KEY, developer_id TEXT REFERENCES developers(developer_id), full_name TEXT NOT NULL, bank_account_number bigint NOT NULL, bank_name TEXT NOT NULL, payment_method TEXT NOT NULL"
 );
 
+createTable(
+  "dex_testing",
+  "id SERIAL PRIMARY KEY, fireblocks_account_address TEXT DEFAULT NULL, fireblocks_account_id TEXT DEFAULT NULL"
+);
+
 export const query = (text: string, params: any[]) => pool.query(text, params);
 
 // import { Pool } from "pg";

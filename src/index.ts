@@ -20,6 +20,7 @@ import uploadImage from "./routes/imageRoutes";
 import fireblocks from "./routes/fireBlocks";
 import authentication from "./routes/authRoutes";
 import p2pProfile from "./routes/p2pProfileRoutes";
+import dexTesting from "./routes/dexTestingRoutes";
 
 import cookieParser from "cookie-parser";
 
@@ -67,6 +68,7 @@ app.use("/uploadimage", uploadImage);
 app.use("/fireBlocks", fireblocks);
 app.use("/authentication", authentication);
 app.use("/p2pProfile", p2pProfile);
+app.use("/dexTesting", dexTesting);
 
 app.listen(port, () => {
   console.log(`App listening at ${port}`);
