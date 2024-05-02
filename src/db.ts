@@ -57,7 +57,7 @@ createTable(
   zetawallet TEXT DEFAULT NULL,
   player_id TEXT DEFAULT NULL UNIQUE,
   fireblocks_account_address TEXT DEFAULT NULL,
-  fireblocks_account_id TEXT DEFAULT NULL,
+  fireblocks_account_id TEXT DEFAULT NULL
   `
 );
 
@@ -138,7 +138,7 @@ createTable(
   zetawallet TEXT DEFAULT NULL,
   developer_id TEXT DEFAULT NULL UNIQUE,
   fireblocks_account_address TEXT DEFAULT NULL,
-  fireblocks_account_id TEXT DEFAULT NULL,
+  fireblocks_account_id TEXT DEFAULT NULL
   `
 );
 // createTable(
