@@ -25,7 +25,7 @@ import dexTesting from "./routes/dexTestingRoutes";
 import cookieParser from "cookie-parser";
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT ?? 3001;
 const swaggerDoc = require("swagger-ui-express");
 // const pinata = require("./routes/pinata");
 // const emailValidate = require('./routes/emailValidate');
