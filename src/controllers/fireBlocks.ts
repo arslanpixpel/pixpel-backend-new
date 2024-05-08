@@ -15,6 +15,9 @@ import {
 import ABI from "../smart-contract/CCT_ABI.json";
 import MarketPlaceABI from "../smart-contract/MarketPlace.json";
 import CollectionABI from "../smart-contract/Collection.json";
+import PixpelFactopryABI from "../smart-contract/PixpelFactory.json";
+import PixpelRouterABI from "../smart-contract/PixpelRouter.json";
+import TokenABI from "../smart-contract/Token.json";
 const jwt = require("jsonwebtoken");
 import crypto from "crypto";
 import * as ethers from "ethers";
@@ -813,5 +816,262 @@ export const getTransactionById = async (
     });
   } catch (err) {
     handleError(err, res);
+  }
+};
+
+export const createPair = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { tokenA, tokenB, vaultAccountId } = req.body;
+    const eip1193Provider = initializeFireblocksProvider(
+      Number(vaultAccountId)
+    );
+    const provider = new ethers.providers.Web3Provider(eip1193Provider);
+    const gasPrice = await provider.getGasPrice();
+    const factoryContractAddress = process.env.FACTORY_CONTRACT_ADDRESS || "";
+    const factoryContract = new ethers.Contract(
+      factoryContractAddress,
+      PixpelFactopryABI,
+      provider.getSigner()
+    );
+
+    const createPairTx = await factoryContract.createPair(tokenA, tokenB);
+
+    const status = await createPairTx.wait();
+
+    res.status(200).json({
+      message: "Pair created successfully",
+      transactionHash: createPairTx.hash,
+      result: createPairTx,
+      pairAddress: status,
+    });
+  } catch (error) {
+    handleError(error, res);
+  }
+};
+
+export const addLiquidity = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const {
+      tokenA,
+      tokenB,
+      amountADesired,
+      amountBDesired,
+      amountAMin,
+      amountBMin,
+      to,
+      deadline,
+      vaultAccountId,
+    } = req.body;
+    const eip1193Provider = initializeFireblocksProvider(
+      Number(vaultAccountId)
+    );
+    const provider = new ethers.providers.Web3Provider(eip1193Provider);
+    const gasPrice = await provider.getGasPrice();
+    const routerContractAddress = process.env.ROUTER_CONTRACT_ADDRESS || "";
+    const routerContract = new ethers.Contract(
+      routerContractAddress,
+      PixpelRouterABI,
+      provider.getSigner()
+    );
+
+    const tokenAContract = new ethers.Contract(
+      tokenA,
+      TokenABI,
+      provider.getSigner()
+    );
+    const tokenBContract = new ethers.Contract(
+      tokenB,
+      TokenABI,
+      provider.getSigner()
+    );
+
+    const txA = await tokenAContract.approve(
+      routerContractAddress,
+      amountADesired
+    );
+    await txA.wait();
+    const txB = await tokenBContract.approve(
+      routerContractAddress,
+      amountBDesired
+    );
+    await txB.wait();
+
+    const addLiquidityTx = await routerContract.addLiquidity(
+      tokenA,
+      tokenB,
+      amountADesired,
+      amountBDesired,
+      amountAMin,
+      amountBMin,
+      to,
+      deadline,
+      {
+        gasPrice: gasPrice,
+      }
+    );
+
+    const status = await addLiquidityTx.wait();
+
+    res.status(200).json({
+      message: "Liquidity added successfully",
+      transactionHash: addLiquidityTx.hash,
+      result: status,
+    });
+  } catch (error) {
+    handleError(error, res);
+  }
+};
+
+export const swapExactTokensForTokens = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { amountIn, amountOutMin, path, to, deadline, vaultAccountId } =
+      req.body;
+    const eip1193Provider = initializeFireblocksProvider(
+      Number(vaultAccountId)
+    );
+    const provider = new ethers.providers.Web3Provider(eip1193Provider);
+    const gasPrice = await provider.getGasPrice();
+    const routerContractAddress = process.env.ROUTER_CONTRACT_ADDRESS || "";
+    const routerContract = new ethers.Contract(
+      routerContractAddress,
+      PixpelRouterABI,
+      provider.getSigner()
+    );
+    const tokenAContract = new ethers.Contract(
+      path[0],
+      TokenABI,
+      provider.getSigner()
+    );
+    const txA = await tokenAContract.approve(routerContractAddress, amountIn);
+    await txA.wait();
+    const swapExactTokensForTokensTx =
+      await routerContract.swapExactTokensForTokens(
+        amountIn,
+        amountOutMin,
+        path,
+        to,
+        deadline,
+        {
+          gasPrice: gasPrice,
+          gasLimit: "200000",
+        }
+      );
+
+    const status = await swapExactTokensForTokensTx.wait();
+
+    res.status(200).json({
+      message: "Tokens swapped successfully",
+      transactionHash: swapExactTokensForTokensTx.hash,
+      result: status,
+    });
+  } catch (error) {
+    handleError(error, res);
+  }
+};
+
+export const removeLiquidity = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const {
+      tokenA,
+      tokenB,
+      liquidity,
+      amountAMin,
+      amountBMin,
+      to,
+      deadline,
+      vaultAccountId,
+    } = req.body;
+    const eip1193Provider = initializeFireblocksProvider(
+      Number(vaultAccountId)
+    );
+    const provider = new ethers.providers.Web3Provider(eip1193Provider);
+    const gasPrice = await provider.getGasPrice();
+    const routerContractAddress = process.env.ROUTER_CONTRACT_ADDRESS || "";
+    const factoryContractAddress = process.env.FACTORY_CONTRACT_ADDRESS || "";
+    const factoryContract = new ethers.Contract(
+      factoryContractAddress,
+      PixpelFactopryABI,
+      provider.getSigner()
+    );
+
+    const routerContract = new ethers.Contract(
+      routerContractAddress,
+      PixpelRouterABI,
+      provider.getSigner()
+    );
+
+    const tokenAContract = new ethers.Contract(
+      tokenA,
+      TokenABI,
+      provider.getSigner()
+    );
+    // const tokenBContract = new ethers.Contract(
+    //   tokenB,
+    //   TokenABI,
+    //   provider.getSigner()
+    // );
+
+    const txA = await tokenAContract.approve(routerContractAddress, liquidity);
+    await txA.wait();
+    // const txB = await tokenBContract.approve(routerContractAddress, liquidity);
+    // await txB.wait();
+
+    const removeLiquidityTx = await routerContract.removeLiquidity(
+      tokenA,
+      tokenB,
+      liquidity,
+      amountAMin,
+      amountBMin,
+      to,
+      deadline,
+      {
+        gasPrice: gasPrice,
+        gasLimit: "200000",
+      }
+    );
+
+    const status = await removeLiquidityTx.wait();
+
+    res.status(200).json({
+      message: "Liquidity removed successfully",
+      transactionHash: removeLiquidityTx.hash,
+      result: removeLiquidityTx,
+      amountA: status.events[0].args.amountA,
+      amountB: status.events[0].args.amountB,
+    });
+  } catch (error) {
+    handleError(error, res);
+  }
+};
+
+export const addToken = async (req: express.Request, res: express.Response) => {
+  try {
+    const { blockChainId, symbol, address } = req.body;
+    console.log(req.body, "Body");
+    const registerAsset = await fireBlocksReqHelper(
+      "/assets",
+      { blockChainId, symbol, address },
+      "post"
+    );
+    res.status(200).json({
+      message: "Register Asset successfully",
+      result: registerAsset,
+    });
+  } catch (error: any) {
+    // console.log(error?.response?.data || error?.message);
+    console.log(error?.response?.data);
+    handleError(error, res);
   }
 };
