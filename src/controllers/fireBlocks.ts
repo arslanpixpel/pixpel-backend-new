@@ -913,6 +913,7 @@ export const addLiquidity = async (
       deadline,
       {
         gasPrice: gasPrice,
+        gasLimit: "200000",
       }
     );
 
