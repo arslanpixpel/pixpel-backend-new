@@ -40,5 +40,7 @@ router.post("/removeLiquidity", fireBlocks.removeLiquidity);
 
 router.post("/addToken", fireBlocks.addToken);
 router.post("/swapExactTokensForTokens", fireBlocks.swapExactTokensForTokens);
+router.post("/getReserves", fireBlocks.getReserves);
+router.post("/addLiquidityETH", fireBlocks.addLiquidityETH);
 
 export default router;
