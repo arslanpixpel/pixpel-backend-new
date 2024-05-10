@@ -18,6 +18,8 @@ import CollectionABI from "../smart-contract/Collection.json";
 import PixpelFactopryABI from "../smart-contract/PixpelFactory.json";
 import PixpelRouterABI from "../smart-contract/PixpelRouter.json";
 import TokenABI from "../smart-contract/Token.json";
+import PixpelPairABI from "../smart-contract/PixpelPair.json";
+import PixpelWethABI from "../smart-contract/Weth.json";
 const jwt = require("jsonwebtoken");
 import crypto from "crypto";
 import * as ethers from "ethers";
@@ -1006,7 +1008,17 @@ export const removeLiquidity = async (
       PixpelFactopryABI,
       provider.getSigner()
     );
-
+    const pairAddrress = await factoryContract.getPair(tokenA, tokenB);
+    const pairContract = new ethers.Contract(
+      pairAddrress,
+      PixpelPairABI,
+      provider.getSigner()
+    );
+    const approvePairAmount = await pairContract.approve(
+      routerContractAddress,
+      liquidity
+    );
+    await approvePairAmount.wait();
     const routerContract = new ethers.Contract(
       routerContractAddress,
       PixpelRouterABI,
@@ -1049,8 +1061,121 @@ export const removeLiquidity = async (
       message: "Liquidity removed successfully",
       transactionHash: removeLiquidityTx.hash,
       result: removeLiquidityTx,
-      amountA: status.events[0].args.amountA,
-      amountB: status.events[0].args.amountB,
+    });
+  } catch (error) {
+    handleError(error, res);
+  }
+};
+
+export const getReserves = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { tokenA, tokenB, vaultAccountId } = req.body;
+    const eip1193Provider = initializeFireblocksProvider(
+      Number(vaultAccountId)
+    );
+    const provider = new ethers.providers.Web3Provider(eip1193Provider);
+    const gasPrice = await provider.getGasPrice();
+    const factoryContractAddress = process.env.FACTORY_CONTRACT_ADDRESS || "";
+    const factoryContract = new ethers.Contract(
+      factoryContractAddress,
+      PixpelFactopryABI,
+      provider.getSigner()
+    );
+    const pairAddrress = await factoryContract.getPair(tokenA, tokenB);
+    const pairContract = new ethers.Contract(
+      pairAddrress,
+      PixpelPairABI,
+      provider.getSigner()
+    );
+
+    const reserves = await pairContract.getReserves();
+
+    res.status(200).json({
+      message: "Reserves retrieved successfully",
+      reserve: reserves,
+      result: {
+        tokenAReserve: ethers.utils.formatEther(reserves[0].toString()),
+        tokenBReserve: ethers.utils.formatEther(reserves[1].toString()),
+        blockTimestampLast: reserves[2],
+      },
+    });
+  } catch (error) {
+    handleError(error, res);
+  }
+};
+
+export const addLiquidityETH = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const {
+      token,
+      amountTokenDesired,
+      amountTokenMin,
+      amountETHMin,
+      to,
+      deadline,
+      vaultAccountId,
+    } = req.body;
+    const eip1193Provider = initializeFireblocksProvider(
+      Number(vaultAccountId)
+    );
+    const provider = new ethers.providers.Web3Provider(eip1193Provider);
+    const gasPrice = await provider.getGasPrice();
+    const routerContractAddress = process.env.ROUTER_CONTRACT_ADDRESS || "";
+    const routerContract = new ethers.Contract(
+      routerContractAddress,
+      PixpelRouterABI,
+      provider.getSigner()
+    );
+    const wethAddress = await routerContract.WETH();
+
+    const wethProvider = new ethers.Contract(
+      wethAddress,
+      PixpelWethABI,
+      provider.getSigner()
+    );
+
+    const wethApprove = await wethProvider.approve(to, amountETHMin);
+
+    await wethApprove.wait();
+
+    const tokenContract = new ethers.Contract(
+      token,
+      TokenABI,
+      provider.getSigner()
+    );
+
+    const tx = await tokenContract.approve(
+      routerContractAddress,
+      amountTokenDesired
+    );
+    await tx.wait();
+
+    const addLiquidityTx = await routerContract.addLiquidityETH(
+      token,
+      amountTokenDesired,
+      amountTokenMin,
+      amountETHMin,
+      to,
+      deadline,
+      {
+        value: amountETHMin,
+        gasPrice: gasPrice,
+        gasLimit: "200000",
+      }
+    );
+
+    const status = await addLiquidityTx.wait();
+
+    res.status(200).json({
+      message: "Liquidity added successfully",
+      transactionHash: addLiquidityTx.hash,
+      result: status,
     });
   } catch (error) {
     handleError(error, res);
@@ -1071,8 +1196,6 @@ export const addToken = async (req: express.Request, res: express.Response) => {
       result: registerAsset,
     });
   } catch (error: any) {
-    // console.log(error?.response?.data || error?.message);
-    console.log(error?.response?.data);
     handleError(error, res);
   }
 };
