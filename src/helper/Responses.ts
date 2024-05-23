@@ -13,7 +13,10 @@ export const handleCreateResponse = (
   if (createdObject) {
     res.status(201).send({
       message: successMessage,
-      data: `Created object with _id: ${createdObject.id}`,
+      data:
+        createdObject.id === undefined
+          ? `Created object Successfully`
+          : `Created object with _id: ${createdObject.id}`,
       responce: createdObject,
     });
   } else {
