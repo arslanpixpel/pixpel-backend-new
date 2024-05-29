@@ -222,7 +222,7 @@ export const signinPlayer = async (
   }
 };
 
-export const hello = async (req: any, res: express.Response) => {
+export const checkUser = async (req: any, res: express.Response) => {
   try {
     res.status(200).send({ user: req.user });
   } catch (err) {

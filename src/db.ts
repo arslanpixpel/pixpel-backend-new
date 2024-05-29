@@ -1,22 +1,22 @@
 import { Pool } from "pg";
 
-// const pool = new Pool({
-//   user: "postgres",
-//   host: "127.0.0.1",
-//   database: "Pixpel-backend",
-//   // database: "postgres",
-//   password: "ubuntu",
-//   port: 5432,
-// });
-
 const pool = new Pool({
   user: "postgres",
   host: "127.0.0.1",
-  // database: "Pixpel-backend",
-  database: "postgres",
-  password: "zain1234",
+  database: "Pixpel-backend",
+  // database: "postgres",
+  password: "ubuntu",
   port: 5432,
 });
+
+// const pool = new Pool({
+//   user: "postgres",
+//   host: "127.0.0.1",
+//   // database: "Pixpel-backend",
+//   database: "postgres",
+//   password: "zain1234",
+//   port: 5432,
+// });
 
 const createTable = async (tableName: string, columns: string) => {
   const result = await pool.query(
@@ -57,7 +57,7 @@ createTable(
   zetawallet TEXT DEFAULT NULL,
   player_id TEXT DEFAULT NULL UNIQUE,
   fireblocks_account_address TEXT DEFAULT NULL,
-  fireblocks_account_id TEXT DEFAULT NULL,
+  fireblocks_account_id TEXT DEFAULT NULL
   `
 );
 
@@ -138,7 +138,7 @@ createTable(
   zetawallet TEXT DEFAULT NULL,
   developer_id TEXT DEFAULT NULL UNIQUE,
   fireblocks_account_address TEXT DEFAULT NULL,
-  fireblocks_account_id TEXT DEFAULT NULL,
+  fireblocks_account_id TEXT DEFAULT NULL
   `
 );
 // createTable(
@@ -271,8 +271,8 @@ createTable(
 );
 
 createTable(
-  "sessions",
-  "id SERIAL PRIMARY KEY, ipAddress TEXT NOT NULL, token TEXT NOT NULL"
+  "dex_testing",
+  "id SERIAL PRIMARY KEY, fireblocks_account_address TEXT DEFAULT NULL, fireblocks_account_id TEXT DEFAULT NULL"
 );
 
 export const query = (text: string, params: any[]) => pool.query(text, params);

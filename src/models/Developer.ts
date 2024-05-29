@@ -197,7 +197,7 @@ export const signupDeveloper = async (developer: Developer) => {
         perPercentage,
         percentage,
         shareHolders,
-        zetawallet,
+        zetawallet.toLowerCase(),
         developer_id,
         fireblocks_account_address,
         fireblocks_account_id,

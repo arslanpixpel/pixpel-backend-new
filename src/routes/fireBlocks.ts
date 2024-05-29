@@ -31,5 +31,16 @@ router.post(
   "/createVaultAccountWithAsset",
   fireBlocks.createVaultAccountWithAsset
 );
+router.get("/getTransactionById", fireBlocks.getTransactionById);
+router.get("/getTransactions", fireBlocks.getTransactions);
+router.get("/getAllTransactionsById/:id", fireBlocks.getAllTransactionsById);
+router.post("/createPair", fireBlocks.createPair);
+router.post("/addLiquidity", fireBlocks.addLiquidity);
+router.post("/removeLiquidity", fireBlocks.removeLiquidity);
+
+router.post("/addToken", fireBlocks.addToken);
+router.post("/swapExactTokensForTokens", fireBlocks.swapExactTokensForTokens);
+router.post("/getReserves", fireBlocks.getReserves);
+router.post("/addLiquidityETH", fireBlocks.addLiquidityETH);
 
 export default router;

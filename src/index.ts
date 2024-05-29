@@ -20,13 +20,14 @@ import uploadImage from "./routes/imageRoutes";
 import fireblocks from "./routes/fireBlocks";
 import authentication from "./routes/authRoutes";
 import p2pProfile from "./routes/p2pProfileRoutes";
+import dexTesting from "./routes/dexTestingRoutes";
 
 import cookieParser from "cookie-parser";
 import { deleteSessionByIp } from "./controllers/sessionController";
 import { handleError } from "./helper/Responses";
 
 const app = express();
-const port = 3002;
+const port = process.env.PORT ?? 3001;
 const swaggerDoc = require("swagger-ui-express");
 // const pinata = require("./routes/pinata");
 // const emailValidate = require('./routes/emailValidate');
@@ -80,6 +81,7 @@ app.get("/logout", async (req: any, res: any) => {
     handleError(error, res);
   }
 });
+app.use("/dexTesting", dexTesting);
 
 app.listen(port, () => {
   console.log(`App listening at ${port}`);
