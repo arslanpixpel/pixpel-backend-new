@@ -22,9 +22,11 @@ import authentication from "./routes/authRoutes";
 import p2pProfile from "./routes/p2pProfileRoutes";
 
 import cookieParser from "cookie-parser";
+import { deleteSessionByIp } from "./controllers/sessionController";
+import { handleError } from "./helper/Responses";
 
 const app = express();
-const port = 3001;
+const port = 3002;
 const swaggerDoc = require("swagger-ui-express");
 // const pinata = require("./routes/pinata");
 // const emailValidate = require('./routes/emailValidate');
@@ -67,6 +69,17 @@ app.use("/uploadimage", uploadImage);
 app.use("/fireBlocks", fireblocks);
 app.use("/authentication", authentication);
 app.use("/p2pProfile", p2pProfile);
+app.get("/logout", async (req: any, res: any) => {
+  try {
+    const clientIp =
+      req.ip || req.socket.remoteAddress || req.headers["x-forwarded-for"];
+    await deleteSessionByIp(clientIp as string);
+
+    res.sendStatus(200);
+  } catch (error) {
+    handleError(error, res);
+  }
+});
 
 app.listen(port, () => {
   console.log(`App listening at ${port}`);

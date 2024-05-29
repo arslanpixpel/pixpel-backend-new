@@ -1,22 +1,22 @@
 import { Pool } from "pg";
 
-const pool = new Pool({
-  user: "postgres",
-  host: "127.0.0.1",
-  database: "Pixpel-backend",
-  // database: "postgres",
-  password: "ubuntu",
-  port: 5432,
-});
-
 // const pool = new Pool({
 //   user: "postgres",
 //   host: "127.0.0.1",
-//   // database: "Pixpel-backend",
-//   database: "postgres",
-//   password: "zain1234",
+//   database: "Pixpel-backend",
+//   // database: "postgres",
+//   password: "ubuntu",
 //   port: 5432,
 // });
+
+const pool = new Pool({
+  user: "postgres",
+  host: "127.0.0.1",
+  // database: "Pixpel-backend",
+  database: "postgres",
+  password: "zain1234",
+  port: 5432,
+});
 
 const createTable = async (tableName: string, columns: string) => {
   const result = await pool.query(
@@ -268,6 +268,11 @@ createTable(
 createTable(
   "p2p_profile_developer",
   "id SERIAL PRIMARY KEY, developer_id TEXT REFERENCES developers(developer_id), full_name TEXT NOT NULL, bank_account_number bigint NOT NULL, bank_name TEXT NOT NULL, payment_method TEXT NOT NULL"
+);
+
+createTable(
+  "sessions",
+  "id SERIAL PRIMARY KEY, ipAddress TEXT NOT NULL, token TEXT NOT NULL"
 );
 
 export const query = (text: string, params: any[]) => pool.query(text, params);
