@@ -13,6 +13,7 @@ import {
 } from "../helper/Responses";
 const jwt = require("jsonwebtoken");
 const secretKey = "3650"; // Replace with your actual secret key
+import { createSession } from "../controllers/sessionController";
 
 export const readDeveloper = async (
   req: express.Request,
@@ -130,9 +131,19 @@ export const signupDeveloper = async (
       { expiresIn: "1d" } // You can adjust the expiration time
     );
 
+    const clientIp =
+      req.ip || req.socket.remoteAddress || req.headers["x-forwarded-for"];
+
+    const { data, error, success } = await createSession(
+      clientIp as string,
+      token
+    );
+
+    if (!success) return handleError(error, res);
+
     res.status(201).send({
       message: "Developer signed up successfully",
-      data: { developer, token },
+      data: { developer, token, session: data },
     });
   } catch (err) {
     handleError(err, res);
@@ -154,10 +165,19 @@ export const signinDeveloper = async (
         secretKey,
         { expiresIn: "1d" } // You can adjust the expiration time
       );
+      const clientIp =
+        req.ip || req.socket.remoteAddress || req.headers["x-forwarded-for"];
+
+      const { data, error, success } = await createSession(
+        clientIp as string,
+        token
+      );
+
+      if (!success) return handleError(error, res);
 
       res.status(200).send({
         message: "Developer signed in successfully",
-        data: { developer, token },
+        data: { developer, token, session: data },
       });
     } else {
       res.status(401).send({ error: "Invalid email or password" });

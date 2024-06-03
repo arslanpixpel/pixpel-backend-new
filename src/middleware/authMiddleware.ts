@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { query } from "../db";
+import { getSessionByIp } from "../controllers/sessionController";
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
@@ -30,16 +31,18 @@ require("dotenv").config();
 // };
 
 export const checkCookieMiddleware = async (
-  req: Request,
+  req: any,
   res: Response,
   next: NextFunction
 ) => {
   try {
     let jwtToken;
-    const authAdminHeader = req.headers.authorization;
-    if (authAdminHeader && authAdminHeader.startsWith("Bearer ")) {
-      jwtToken = authAdminHeader.split(" ")[1]; // Extract token from "Bearer <token>"
-    }
+    const clientIp =
+      req.ip || req.socket.remoteAddress || req.headers["x-forwarded-for"];
+
+    const { data } = await getSessionByIp(clientIp as string);
+
+    if (data && data.token) jwtToken = data.token;
 
     if (!jwtToken) {
       return res
@@ -84,6 +87,8 @@ export const checkCookieMiddleware = async (
     if (Date.now() >= exp * 1000) {
       return res.status(401).json({ message: "Unauthorized: Token expired" });
     }
+
+    req.user = rows[0];
 
     // Token is valid, proceed to next middleware
     next();

@@ -24,6 +24,8 @@ import dexTesting from "./routes/dexTestingRoutes";
 const cron = require("node-cron");
 import cookieParser from "cookie-parser";
 import { query } from "./db";
+import { deleteSessionByIp } from "./controllers/sessionController";
+import { handleError } from "./helper/Responses";
 
 const app = express();
 const port = process.env.PORT ?? 3001;
@@ -69,6 +71,17 @@ app.use("/uploadimage", uploadImage);
 app.use("/fireBlocks", fireblocks);
 app.use("/authentication", authentication);
 app.use("/p2pProfile", p2pProfile);
+app.get("/logout", async (req: any, res: any) => {
+  try {
+    const clientIp =
+      req.ip || req.socket.remoteAddress || req.headers["x-forwarded-for"];
+    await deleteSessionByIp(clientIp as string);
+
+    res.sendStatus(200);
+  } catch (error) {
+    handleError(error, res);
+  }
+});
 app.use("/dexTesting", dexTesting);
 
 cron.schedule("* * * * *", async () => {

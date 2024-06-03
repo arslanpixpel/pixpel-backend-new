@@ -1,6 +1,7 @@
 import express from "express";
 import * as Player from "../models/Player";
 const jwt = require("jsonwebtoken");
+import { createSession } from "../controllers/sessionController";
 const secretKey = "3650"; // Replace with your actual secret key
 import {
   successMessage,
@@ -125,10 +126,19 @@ export const signupPlayer = async (
       process.env.JWT_KEY,
       { expiresIn: "1d" } // You can adjust the expiration time
     );
+    const clientIp =
+      req.ip || req.socket.remoteAddress || req.headers["x-forwarded-for"];
+
+    const { data, error, success } = await createSession(
+      clientIp as string,
+      token
+    );
+
+    if (!success) return handleError(error, res);
 
     res.status(201).send({
       message: "player signed up successfully",
-      data: { player, token },
+      data: { player, token, session: data },
     });
   } catch (err) {
     handleError(err, res);
@@ -163,7 +173,7 @@ export const signupPlayer = async (
 //     handleError(err, res);
 //   }
 // };
-
+let tokenJWT: any;
 export const signinPlayer = async (
   req: express.Request,
   res: express.Response
@@ -180,6 +190,15 @@ export const signinPlayer = async (
         { expiresIn: "2d" } // Expires in 2 days
       );
 
+      const clientIp =
+        req.ip || req.socket.remoteAddress || req.headers["x-forwarded-for"];
+      tokenJWT = token;
+      const { data, error, success } = await createSession(
+        clientIp as string,
+        token
+      );
+
+      if (!success) return handleError(error, res);
       // Set the token as a cookie in the response
       // res.cookie("jwtToken", token, {
       //   httpOnly: true,
@@ -193,7 +212,7 @@ export const signinPlayer = async (
 
       res.status(200).send({
         message: "Player signed in successfully",
-        data: { player, token },
+        data: { player, token, session: data },
       });
     } else {
       res.status(401).send({ error: "Invalid email or password" });
@@ -203,9 +222,9 @@ export const signinPlayer = async (
   }
 };
 
-export const hello = async (req: express.Request, res: express.Response) => {
+export const checkUser = async (req: any, res: express.Response) => {
   try {
-    res.status(200).send({ message: "hello" });
+    res.status(200).send({ user: req.user });
   } catch (err) {
     handleError(err, res);
   }
