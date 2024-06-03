@@ -84,25 +84,6 @@ app.get("/logout", async (req: any, res: any) => {
 });
 app.use("/dexTesting", dexTesting);
 
-cron.schedule("* * * * *", async () => {
-  try {
-    const nfts = await query("SELECT * FROM nfts", []);
-    if (nfts.rows.length) {
-      const polygonInsuranceNfts = nfts.rows
-        .filter((nft) => nft.blockchain !== "Concordium")
-        .filter(
-          (nft) =>
-            nft.insurance_per_hour > 0 &&
-            nft.secondary_owner.length > 0 &&
-            nft.secondary_owner.some((owner: any) => owner.insurance === true)
-        );
-      // console.log(polygonInsuranceNfts);
-    }
-  } catch (error) {
-    console.error(error);
-  }
-});
-
 app.listen(port, () => {
   console.log(`App listening at ${port}`);
 });
