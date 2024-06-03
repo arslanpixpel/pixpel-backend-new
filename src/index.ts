@@ -21,8 +21,9 @@ import fireblocks from "./routes/fireBlocks";
 import authentication from "./routes/authRoutes";
 import p2pProfile from "./routes/p2pProfileRoutes";
 import dexTesting from "./routes/dexTestingRoutes";
-
+const cron = require("node-cron");
 import cookieParser from "cookie-parser";
+import { query } from "./db";
 
 const app = express();
 const port = process.env.PORT ?? 3001;
@@ -69,6 +70,25 @@ app.use("/fireBlocks", fireblocks);
 app.use("/authentication", authentication);
 app.use("/p2pProfile", p2pProfile);
 app.use("/dexTesting", dexTesting);
+
+cron.schedule("* * * * *", async () => {
+  try {
+    const nfts = await query("SELECT * FROM nfts", []);
+    if (nfts.rows.length) {
+      const polygonInsuranceNfts = nfts.rows
+        .filter((nft) => nft.blockchain !== "Concordium")
+        .filter(
+          (nft) =>
+            nft.insurance_per_hour > 0 &&
+            nft.secondary_owner.length > 0 &&
+            nft.secondary_owner.some((owner: any) => owner.insurance === true)
+        );
+      // console.log(polygonInsuranceNfts);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+});
 
 app.listen(port, () => {
   console.log(`App listening at ${port}`);
