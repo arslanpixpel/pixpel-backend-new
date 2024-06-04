@@ -62,7 +62,7 @@ export async function handlePinata(
       name: name,
       description: description,
       display: {
-        url: `https://silver-junior-jellyfish-759.mypinata.cloud/ipfs/${imageResult.IpfsHash}#`,
+        url: `https://pixpel.mypinata.cloud/ipfs/${imageResult.IpfsHash}#`,
       },
       attributes: attributes,
     };
@@ -84,7 +84,7 @@ export async function handlePinata(
       options: jsonOptions,
     });
     // console.log("JSON Pinata Result: ", jsonResult);
-    const image = `https://silver-junior-jellyfish-759.mypinata.cloud/ipfs/${imageResult.IpfsHash}`;
+    const image = `https://pixpel.mypinata.cloud/ipfs/${imageResult.IpfsHash}`;
     res.send({ image: image, json: jsonResult.IpfsHash });
   } catch (e: any) {
     res.status(400).send(e.message);
