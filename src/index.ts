@@ -43,11 +43,10 @@ app.use(cookieParser());
 app.use(session({
   secret: 'yoursecret',
   cookie: {
-      path: '/',
       domain: 'pixpel.io',
       maxAge: 1000 * 60 * 24 * 30 // 30 days
   },
-  resave: true,
+  resave: false,
   saveUninitialized: true
 }));
 app.use(function(req, res, next) {
@@ -93,7 +92,17 @@ app.use("/p2pProfile", p2pProfile);
 app.get("/logout", async (req: any, res: any) => {
   try {
     req.session.token = null;
-    res.sendStatus(200);
+    req.session.save(function (err: any) {
+      if (err) handleError(err, res)
+  
+      // regenerate the session, which is good practice to help
+      // guard against forms of session fixation
+      req.session.regenerate(function (err: any) {
+        if (err) handleError(err, res)
+        res.sendStatus(200)
+      })
+    })
+  
   } catch (error) {
     handleError(error, res);
   }

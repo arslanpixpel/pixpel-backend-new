@@ -10,8 +10,8 @@ router.put("/update/:id", developerController.updateDeveloper);
 router.put("/updateImg/:id", developerController.updateDeveloperImg);
 router.delete("/delete/:id", developerController.deleteDeveloper);
 router.get("/getAll", developerController.getAllDevelopers);
-router.post("/signup", developerController.signupDeveloper);
-router.post("/signin", developerController.signinDeveloper);
+router.post("/signup", express.urlencoded({ extended: false }), developerController.signupDeveloper);
+router.post("/signin", express.urlencoded({ extended: false }), developerController.signinDeveloper);
 router.post(
   "/forgetPassword",
   developerController.updatePlayerPasswordController

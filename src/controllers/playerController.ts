@@ -128,12 +128,22 @@ export const signupPlayer = async (
       { expiresIn: "30d" } // You can adjust the expiration time
     );
 
-    req.session.token = token;
+    req.session.regenerate(function (err: any) {
+      if (err) handleError(err, res)
 
-    res.status(201).send({
-      message: "player signed up successfully",
-      data: { player, token },
-    });
+      // store user information in session, typically a user id
+      req.session.token = token;
+
+      // save the session before redirection to ensure page
+      // load does not happen before session is saved
+      req.session.save(function (err: any) {
+        if (err) return handleError(err, res)
+        res.status(201).send({
+          message: "player signed up successfully",
+          data: { player, token },
+        });
+      })
+    })
   } catch (err) {
     handleError(err, res);
   }
@@ -185,7 +195,22 @@ export const signinPlayer = async (
       );
 
       tokenJWT = token;
-      req.session.token = token;
+      req.session.regenerate(function (err: any) {
+        if (err) handleError(err, res)
+
+        // store user information in session, typically a user id
+        req.session.token = token;
+
+        // save the session before redirection to ensure page
+        // load does not happen before session is saved
+        req.session.save(function (err: any) {
+          if (err) return handleError(err, res)
+          res.status(200).send({
+            message: "Player signed in successfully",
+            data: { player, token },
+          });
+        })
+      })
 
       // Set the token as a cookie in the response
       // res.cookie("jwtToken", token, {
@@ -198,10 +223,7 @@ export const signinPlayer = async (
 
       // 172800 seconds = 2 days
 
-      res.status(200).send({
-        message: "Player signed in successfully",
-        data: { player, token },
-      });
+
     } else {
       res.status(401).send({ error: "Invalid email or password" });
     }
