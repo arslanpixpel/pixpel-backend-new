@@ -46,7 +46,9 @@ app.use(session({
       path: '/',
       domain: 'pixpel.io',
       maxAge: 1000 * 60 * 24 * 30 // 30 days
-  }
+  },
+  resave: true,
+  saveUninitialized: true
 }));
 app.use(function(req, res, next) {
   res.header('Access-Control-Allow-Credentials', "true");
