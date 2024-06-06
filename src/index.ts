@@ -26,6 +26,7 @@ import cookieParser from "cookie-parser";
 import { query } from "./db";
 import { deleteSessionByIp } from "./controllers/sessionController";
 import { handleError } from "./helper/Responses";
+import session from "express-session";
 
 const app = express();
 const port = process.env.PORT ?? 3001;
@@ -39,6 +40,22 @@ app.use(cors());
 app.options("*", cors());
 app.use(express.json());
 app.use(cookieParser());
+app.use(session({
+  secret: 'yoursecret',
+  cookie: {
+      path: '/',
+      domain: 'pixpel.io',
+      maxAge: 1000 * 60 * 24 * 30 // 30 days
+  }
+}));
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Credentials', "true");
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+  next();
+});
+
 app.use("/documentations", swaggerDoc.serve);
 app.use("/documentations", swaggerDoc.setup(swaggerDocumentation));
 
@@ -73,10 +90,7 @@ app.use("/authentication", authentication);
 app.use("/p2pProfile", p2pProfile);
 app.get("/logout", async (req: any, res: any) => {
   try {
-    const clientIp =
-      req.ip || req.socket.remoteAddress || req.headers["x-forwarded-for"];
-    await deleteSessionByIp(clientIp as string);
-
+    req.session.token = null;
     res.sendStatus(200);
   } catch (error) {
     handleError(error, res);

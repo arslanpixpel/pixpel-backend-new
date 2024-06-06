@@ -14,6 +14,7 @@ import {
   handleUpdateResponse,
   handleDeleteResponse,
 } from "../helper/Responses";
+import { Session } from "express-session";
 
 export const readPlayer = async (
   req: express.Request,
@@ -116,7 +117,7 @@ export const getAllPlayers = async (
 };
 
 export const signupPlayer = async (
-  req: express.Request,
+  req: any,
   res: express.Response
 ) => {
   try {
@@ -124,21 +125,14 @@ export const signupPlayer = async (
     const token = jwt.sign(
       { userId: player.id, email: player.email, role: "player" },
       process.env.JWT_KEY,
-      { expiresIn: "1d" } // You can adjust the expiration time
-    );
-    const clientIp =
-      req.ip || req.socket.remoteAddress || req.headers["x-forwarded-for"];
-
-    const { data, error, success } = await createSession(
-      clientIp as string,
-      token
+      { expiresIn: "30d" } // You can adjust the expiration time
     );
 
-    if (!success) return handleError(error, res);
+    req.session.token = token;
 
     res.status(201).send({
       message: "player signed up successfully",
-      data: { player, token, session: data },
+      data: { player, token },
     });
   } catch (err) {
     handleError(err, res);
@@ -159,7 +153,7 @@ export const signupPlayer = async (
 //       const token = jwt.sign(
 //         { userId: player.id, email: player.email },
 //         secretKey,
-//         { expiresIn: "1d" } // You can adjust the expiration time
+//         { expiresIn: "30d" } // You can adjust the expiration time
 //       );
 
 //       res.status(200).send({
@@ -175,7 +169,7 @@ export const signupPlayer = async (
 // };
 let tokenJWT: any;
 export const signinPlayer = async (
-  req: express.Request,
+  req: any,
   res: express.Response
 ) => {
   try {
@@ -187,18 +181,12 @@ export const signinPlayer = async (
       const token = jwt.sign(
         { userId: player.id, email: player.email, role: "player" },
         process.env.JWT_KEY,
-        { expiresIn: "2d" } // Expires in 2 days
+        { expiresIn: "30d" } // Expires in 2 days
       );
 
-      const clientIp =
-        req.ip || req.socket.remoteAddress || req.headers["x-forwarded-for"];
       tokenJWT = token;
-      const { data, error, success } = await createSession(
-        clientIp as string,
-        token
-      );
+      req.session.token = token;
 
-      if (!success) return handleError(error, res);
       // Set the token as a cookie in the response
       // res.cookie("jwtToken", token, {
       //   httpOnly: true,
@@ -212,7 +200,7 @@ export const signinPlayer = async (
 
       res.status(200).send({
         message: "Player signed in successfully",
-        data: { player, token, session: data },
+        data: { player, token },
       });
     } else {
       res.status(401).send({ error: "Invalid email or password" });

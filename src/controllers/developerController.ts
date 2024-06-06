@@ -118,7 +118,7 @@ export const getAllDevelopers = async (
 };
 
 export const signupDeveloper = async (
-  req: express.Request,
+  req: any,
   res: express.Response
 ) => {
   try {
@@ -128,22 +128,14 @@ export const signupDeveloper = async (
     const token = jwt.sign(
       { userId: developer.id, email: developer.email },
       secretKey,
-      { expiresIn: "1d" } // You can adjust the expiration time
+      { expiresIn: "30d" } // You can adjust the expiration time
     );
 
-    const clientIp =
-      req.ip || req.socket.remoteAddress || req.headers["x-forwarded-for"];
-
-    const { data, error, success } = await createSession(
-      clientIp as string,
-      token
-    );
-
-    if (!success) return handleError(error, res);
+    req.session.token = token;
 
     res.status(201).send({
       message: "Developer signed up successfully",
-      data: { developer, token, session: data },
+      data: { developer, token },
     });
   } catch (err) {
     handleError(err, res);
@@ -151,7 +143,7 @@ export const signupDeveloper = async (
 };
 
 export const signinDeveloper = async (
-  req: express.Request,
+  req: any,
   res: express.Response
 ) => {
   try {
@@ -163,21 +155,14 @@ export const signinDeveloper = async (
       const token = jwt.sign(
         { userId: developer.id, email: developer.email, role: "developer" },
         secretKey,
-        { expiresIn: "1d" } // You can adjust the expiration time
+        { expiresIn: "30d" } // You can adjust the expiration time
       );
-      const clientIp =
-        req.ip || req.socket.remoteAddress || req.headers["x-forwarded-for"];
-
-      const { data, error, success } = await createSession(
-        clientIp as string,
-        token
-      );
-
-      if (!success) return handleError(error, res);
+      
+      req.session.token = token;
 
       res.status(200).send({
         message: "Developer signed in successfully",
-        data: { developer, token, session: data },
+        data: { developer, token },
       });
     } else {
       res.status(401).send({ error: "Invalid email or password" });

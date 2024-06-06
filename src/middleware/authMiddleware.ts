@@ -37,12 +37,8 @@ export const checkCookieMiddleware = async (
 ) => {
   try {
     let jwtToken;
-    const clientIp =
-      req.ip || req.socket.remoteAddress || req.headers["x-forwarded-for"];
 
-    const { data } = await getSessionByIp(clientIp as string);
-
-    if (data && data.token) jwtToken = data.token;
+    if (req.session.token) jwtToken = req.session.token;
 
     if (!jwtToken) {
       return res
@@ -83,7 +79,6 @@ export const checkCookieMiddleware = async (
     }
 
     // Verify token expiry
-    console.log(exp, "token expiry");
     if (Date.now() >= exp * 1000) {
       return res.status(401).json({ message: "Unauthorized: Token expired" });
     }
