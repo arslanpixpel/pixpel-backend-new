@@ -36,8 +36,8 @@ const swaggerDoc = require("swagger-ui-express");
 // const mobileValidate = require('./routes/mobileValidate');
 const swaggerDocumentation = require("./helper/Documentation.ts");
 
-app.use(cors());
-app.options("*", cors());
+// app.use(cors());
+// app.options("*", cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(session({
