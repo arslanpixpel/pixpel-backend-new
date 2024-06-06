@@ -131,22 +131,23 @@ export const signupDeveloper = async (
       { expiresIn: "30d" } // You can adjust the expiration time
     );
 
-    req.session.regenerate(function (err: any) {
-      if (err) handleError(err, res)
+    // req.session.regenerate(function (err: any) {
+    //   if (err) handleError(err, res)
 
-      // store user information in session, typically a user id
-      req.session.token = token;
+    //   // store user information in session, typically a user id
+    // req.session.token = token;
+    req.cookie("token", token);
 
-      // save the session before redirection to ensure page
-      // load does not happen before session is saved
-      req.session.save(function (err: any) {
-        if (err) return handleError(err, res)
+    //   // save the session before redirection to ensure page
+    //   // load does not happen before session is saved
+    //   req.session.save(function (err: any) {
+    //     if (err) return handleError(err, res)
         res.status(201).send({
           message: "Developer signed up successfully",
           data: { developer, token },
         });
-      })
-    })
+    //   })
+    // })
   } catch (err) {
     handleError(err, res);
   }
@@ -167,24 +168,25 @@ export const signinDeveloper = async (
         secretKey,
         { expiresIn: "30d" } // You can adjust the expiration time
       );
+      req.cookie("token", token);
 
-      req.session.regenerate(function (err: any) {
-        if (err) handleError(err, res)
+      // req.session.regenerate(function (err: any) {
+      //   if (err) handleError(err, res)
 
-        // store user information in session, typically a user id
-        req.session.token = token;
+      //   // store user information in session, typically a user id
+      //   req.session.token = token;
 
-        // save the session before redirection to ensure page
-        // load does not happen before session is saved
-        req.session.save(function (err: any) {
-          if (err) return handleError(err, res)
+      //   // save the session before redirection to ensure page
+      //   // load does not happen before session is saved
+      //   req.session.save(function (err: any) {
+      //     if (err) return handleError(err, res)
 
           res.status(200).send({
             message: "Developer signed in successfully",
             data: { developer, token },
           });
-        })
-      })
+      //   })
+      // })
     } else {
       res.status(401).send({ error: "Invalid email or password" });
     }

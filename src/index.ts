@@ -26,7 +26,7 @@ import cookieParser from "cookie-parser";
 import { query } from "./db";
 import { deleteSessionByIp } from "./controllers/sessionController";
 import { handleError } from "./helper/Responses";
-import session from "express-session";
+// import session from "express-session";
 
 const app = express();
 const port = process.env.PORT ?? 3001;
@@ -40,16 +40,16 @@ const swaggerDocumentation = require("./helper/Documentation.ts");
 // app.options("*", cors());
 app.use(express.json());
 app.use(cookieParser());
-app.use(session({
-  secret: 'yoursecret',
-  cookie: {
-      domain: 'pixpel.io',
-      maxAge: 1000 * 60 * 24 * 30 // 30 days
-  },
-  resave: false,
-  saveUninitialized: true
-}));
-app.use(function(req, res, next) {
+// app.use(session({
+//   secret: 'yoursecret',
+//   cookie: {
+//       domain: 'pixpel.io',
+//       maxAge: 1000 * 60 * 24 * 30 // 30 days
+//   },
+//   resave: false,
+//   saveUninitialized: true
+// }));
+app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Credentials', "true");
   res.header('Access-Control-Allow-Origin', req.headers.origin);
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
@@ -91,18 +91,22 @@ app.use("/authentication", authentication);
 app.use("/p2pProfile", p2pProfile);
 app.get("/logout", async (req: any, res: any) => {
   try {
-    req.session.token = null;
-    req.session.save(function (err: any) {
-      if (err) handleError(err, res)
-  
-      // regenerate the session, which is good practice to help
-      // guard against forms of session fixation
-      req.session.regenerate(function (err: any) {
-        if (err) handleError(err, res)
-        res.sendStatus(200)
-      })
-    })
-  
+    // req.session.token = null;
+    // req.session.save(function (err: any) {
+    //   if (err) handleError(err, res)
+
+    //   // regenerate the session, which is good practice to help
+    //   // guard against forms of session fixation
+    //   req.session.regenerate(function (err: any) {
+    //     if (err) handleError(err, res)
+    //     res.sendStatus(200)
+    //   })
+    // })
+
+    req.cookie("token", null);
+    res.sendStatus(200)
+
+
   } catch (error) {
     handleError(error, res);
   }

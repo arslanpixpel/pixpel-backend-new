@@ -38,7 +38,7 @@ export const checkCookieMiddleware = async (
   try {
     let jwtToken;
 
-    if (req.session.token) jwtToken = req.session.token;
+    if (req.cookies.token) jwtToken = req.cookies.token;
 
     if (!jwtToken) {
       return res
