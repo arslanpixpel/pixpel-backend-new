@@ -269,3 +269,18 @@ export const checkEmail = async (email: string): Promise<boolean> => {
     throw new Error("An error occurred while checking the email");
   }
 };
+
+export const updateDeveloperDisableStatus = async (
+  id: number,
+  isDisable: boolean
+) => {
+  try {
+    const result = await query(
+      "UPDATE developers SET isdisable=$1 WHERE id=$2",
+      [isDisable, id]
+    );
+    return result.rowCount;
+  } catch (err) {
+    throw err;
+  }
+};

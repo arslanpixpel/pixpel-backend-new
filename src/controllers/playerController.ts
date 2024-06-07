@@ -116,10 +116,7 @@ export const getAllPlayers = async (
   }
 };
 
-export const signupPlayer = async (
-  req: any,
-  res: express.Response
-) => {
+export const signupPlayer = async (req: any, res: express.Response) => {
   try {
     const player = await Player.signupPlayer(req.body);
     const token = jwt.sign(
@@ -129,7 +126,7 @@ export const signupPlayer = async (
     );
 
     req.session.regenerate(function (err: any) {
-      if (err) handleError(err, res)
+      if (err) handleError(err, res);
 
       // store user information in session, typically a user id
       req.session.token = token;
@@ -137,13 +134,13 @@ export const signupPlayer = async (
       // save the session before redirection to ensure page
       // load does not happen before session is saved
       req.session.save(function (err: any) {
-        if (err) return handleError(err, res)
+        if (err) return handleError(err, res);
         res.status(201).send({
           message: "player signed up successfully",
           data: { player, token },
         });
-      })
-    })
+      });
+    });
   } catch (err) {
     handleError(err, res);
   }
@@ -178,10 +175,7 @@ export const signupPlayer = async (
 //   }
 // };
 let tokenJWT: any;
-export const signinPlayer = async (
-  req: any,
-  res: express.Response
-) => {
+export const signinPlayer = async (req: any, res: express.Response) => {
   try {
     const { email, password } = req.body;
     const player = await Player.signinPlayer(email, password);
@@ -196,7 +190,7 @@ export const signinPlayer = async (
 
       tokenJWT = token;
       req.session.regenerate(function (err: any) {
-        if (err) handleError(err, res)
+        if (err) handleError(err, res);
 
         // store user information in session, typically a user id
         req.session.token = token;
@@ -204,13 +198,13 @@ export const signinPlayer = async (
         // save the session before redirection to ensure page
         // load does not happen before session is saved
         req.session.save(function (err: any) {
-          if (err) return handleError(err, res)
+          if (err) return handleError(err, res);
           res.status(200).send({
             message: "Player signed in successfully",
             data: { player, token },
           });
-        })
-      })
+        });
+      });
 
       // Set the token as a cookie in the response
       // res.cookie("jwtToken", token, {
@@ -222,8 +216,6 @@ export const signinPlayer = async (
       // });
 
       // 172800 seconds = 2 days
-
-
     } else {
       res.status(401).send({ error: "Invalid email or password" });
     }
@@ -265,5 +257,19 @@ export const checkEmailController = async (
   } catch (err) {
     console.error("Error checking email:", err);
     res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const updatePlayerDisableStatusController = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const id = parseInt(req.params.id);
+    const isDisable = req.body.isDisable; // Assuming isDisable field is sent in the request body
+    const updatedCount = await Player.updatePlayerDisableStatus(id, isDisable);
+    handleUpdateResponse(res, updatedCount, successMessage, errorMessage); // Implement handleUpdateResponse function accordingly
+  } catch (err) {
+    handleError(err, res); // Implement handleError function accordingly
   }
 };

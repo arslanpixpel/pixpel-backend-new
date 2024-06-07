@@ -117,10 +117,7 @@ export const getAllDevelopers = async (
   }
 };
 
-export const signupDeveloper = async (
-  req: any,
-  res: express.Response
-) => {
+export const signupDeveloper = async (req: any, res: express.Response) => {
   try {
     const developer = await Developer.signupDeveloper(req.body);
 
@@ -132,7 +129,7 @@ export const signupDeveloper = async (
     );
 
     req.session.regenerate(function (err: any) {
-      if (err) handleError(err, res)
+      if (err) handleError(err, res);
 
       // store user information in session, typically a user id
       req.session.token = token;
@@ -140,22 +137,19 @@ export const signupDeveloper = async (
       // save the session before redirection to ensure page
       // load does not happen before session is saved
       req.session.save(function (err: any) {
-        if (err) return handleError(err, res)
+        if (err) return handleError(err, res);
         res.status(201).send({
           message: "Developer signed up successfully",
           data: { developer, token },
         });
-      })
-    })
+      });
+    });
   } catch (err) {
     handleError(err, res);
   }
 };
 
-export const signinDeveloper = async (
-  req: any,
-  res: express.Response
-) => {
+export const signinDeveloper = async (req: any, res: express.Response) => {
   try {
     const { email, password } = req.body;
     const developer = await Developer.signinDeveloper(email, password);
@@ -169,7 +163,7 @@ export const signinDeveloper = async (
       );
 
       req.session.regenerate(function (err: any) {
-        if (err) handleError(err, res)
+        if (err) handleError(err, res);
 
         // store user information in session, typically a user id
         req.session.token = token;
@@ -177,14 +171,14 @@ export const signinDeveloper = async (
         // save the session before redirection to ensure page
         // load does not happen before session is saved
         req.session.save(function (err: any) {
-          if (err) return handleError(err, res)
+          if (err) return handleError(err, res);
 
           res.status(200).send({
             message: "Developer signed in successfully",
             data: { developer, token },
           });
-        })
-      })
+        });
+      });
     } else {
       res.status(401).send({ error: "Invalid email or password" });
     }
@@ -218,5 +212,22 @@ export const checkEmailController = async (
   } catch (err) {
     console.error("Error checking email:", err);
     res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const updateDeveloperDisableStatusController = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const id = parseInt(req.params.id);
+    const isDisable = req.body.isDisable; // Assuming isDisable field is sent in the request body
+    const updatedCount = await Developer.updateDeveloperDisableStatus(
+      id,
+      isDisable
+    );
+    handleUpdateResponse(res, updatedCount, successMessage, errorMessage); // Implement handleUpdateResponse function accordingly
+  } catch (err) {
+    handleError(err, res); // Implement handleError function accordingly
   }
 };
