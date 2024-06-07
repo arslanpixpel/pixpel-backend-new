@@ -20,6 +20,8 @@ interface Developer {
   zetawallet: string;
   fireblocks_account_address: string;
   fireblocks_account_id: string;
+  isdisable: string;
+  created_at: string;
 }
 
 export const readDeveloper = async (id: number) => {
@@ -110,10 +112,11 @@ export const updateDeveloper = async (
       percentage,
       shareHolders,
       zetawallet,
+      isdisable,
     } = updates;
 
     const result = await query(
-      "UPDATE developers SET name=$1, email=$2, wallet=$3, contact_details=$4, verified=$5, img=$6, address=$7, country=$8, launchedAtPixpel=$9, legalName=$10, perPercentage=$11, percentage=$12, shareHolders=$13, zetawallet=$14 WHERE id=$15 RETURNING *",
+      "UPDATE developers SET name=$1, email=$2, wallet=$3, contact_details=$4, verified=$5, img=$6, address=$7, country=$8, launchedAtPixpel=$9, legalName=$10, perPercentage=$11, percentage=$12, shareHolders=$13, zetawallet=$14, isdisable=$15 WHERE id=$16 RETURNING *",
       [
         name,
         email,
@@ -129,6 +132,7 @@ export const updateDeveloper = async (
         percentage,
         shareHolders,
         zetawallet,
+        isdisable,
         id,
       ]
     );
@@ -178,11 +182,13 @@ export const signupDeveloper = async (developer: Developer) => {
       zetawallet,
       fireblocks_account_address,
       fireblocks_account_id,
+      isdisable,
     } = developer;
     const hashedPassword = await bcrypt.hash(password, 10);
     const developer_id = uuidv4();
+    const created_at = new Date().toISOString();
     const result = await query(
-      "INSERT INTO developers(name, email, wallet, contact_details, password, img, address, country, launchedAtPixpel, legalName, perPercentage, percentage, shareHolders, zetawallet, developer_id, fireblocks_account_address, fireblocks_account_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) RETURNING *",
+      "INSERT INTO developers(name, email, wallet, contact_details, password, img, address, country, launchedAtPixpel, legalName, perPercentage, percentage, shareHolders, zetawallet, developer_id, fireblocks_account_address, fireblocks_account_id, isdisable, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING *",
       [
         name,
         email.toLowerCase(),
@@ -201,6 +207,8 @@ export const signupDeveloper = async (developer: Developer) => {
         developer_id,
         fireblocks_account_address,
         fireblocks_account_id,
+        isdisable,
+        created_at,
       ]
     );
     return result.rows[0];

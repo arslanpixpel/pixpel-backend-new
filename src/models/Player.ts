@@ -20,6 +20,8 @@ interface Player {
   shareHolders: string;
   fireblocks_account_address: string;
   fireblocks_account_id: string;
+  isdisable: string;
+  created_at: string;
 }
 
 export const readPlayer = async (id: number) => {
@@ -106,10 +108,11 @@ export const updatePlayer = async (id: number, updates: Partial<Player>) => {
       perPercentage,
       percentage,
       shareHolders,
+      isdisable,
     } = updates;
 
     const result = await query(
-      "UPDATE players SET name=$1, email=$2, wallet=$3, contact_details=$4, verified=$5, img=$6, address=$7, country=$8, launchedAtPixpel=$9, legalName=$10, perPercentage=$11, percentage=$12, shareHolders=$13 WHERE id=$14 RETURNING *",
+      "UPDATE players SET name=$1, email=$2, wallet=$3, contact_details=$4, verified=$5, img=$6, address=$7, country=$8, launchedAtPixpel=$9, legalName=$10, perPercentage=$11, percentage=$12, shareHolders=$13, isdisable=$14 WHERE id=$15 RETURNING *",
       [
         name,
         email,
@@ -124,6 +127,7 @@ export const updatePlayer = async (id: number, updates: Partial<Player>) => {
         perPercentage,
         percentage,
         shareHolders,
+        isdisable,
         id,
       ]
     );
@@ -176,6 +180,8 @@ export const signupPlayer = async (player: {
   player_id: string;
   fireblocks_account_address: string;
   fireblocks_account_id: string;
+  isdisable: string;
+  created_at: string;
 }) => {
   try {
     const {
@@ -195,11 +201,13 @@ export const signupPlayer = async (player: {
       zetawallet,
       fireblocks_account_address,
       fireblocks_account_id,
+      isdisable,
     } = player;
     const hashedPassword = await bcrypt.hash(password, 10);
     const player_id = uuidv4();
+    const created_at = new Date().toISOString();
     const result = await query(
-      "INSERT INTO players(name, email, wallet, contact_details, password, img, address, country, launchedAtPixpel, legalName, perPercentage, percentage, shareHolders, zetawallet, player_id, fireblocks_account_address, fireblocks_account_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) RETURNING *",
+      "INSERT INTO players(name, email, wallet, contact_details, password, img, address, country, launchedAtPixpel, legalName, perPercentage, percentage, shareHolders, zetawallet, player_id, fireblocks_account_address, fireblocks_account_id, isdisable, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING *",
       [
         name,
         email.toLowerCase(),
@@ -218,6 +226,8 @@ export const signupPlayer = async (player: {
         player_id,
         fireblocks_account_address,
         fireblocks_account_id,
+        isdisable,
+        created_at,
       ]
     );
     return result.rows[0];
