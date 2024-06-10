@@ -107,6 +107,16 @@ createTable(
 );
 
 createTable(
+  "user_wallets",
+  `
+  id SERIAL PRIMARY KEY,
+  userId TEXT NOT NULL,
+  userType TEXT NOT NULL,
+  wallet TEXT NOT NULL,
+  `
+);
+
+createTable(
   "holders",
   `
   id SERIAL PRIMARY KEY,

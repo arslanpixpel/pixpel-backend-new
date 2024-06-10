@@ -16,6 +16,7 @@ import nftTransection from "./routes/nftTransectionRoutes";
 import nftMarket from "./routes/nftMarketRoutes";
 import nftAuctions from "./routes/nftAuctionsRoutes";
 import nftBidiing from "./routes/nftBiddingRoutes";
+import userWalletRoutes from "./routes/userWalletRoutes";
 import uploadImage from "./routes/imageRoutes";
 import fireblocks from "./routes/fireBlocks";
 import authentication from "./routes/authRoutes";
@@ -40,20 +41,25 @@ const swaggerDocumentation = require("./helper/Documentation.ts");
 // app.options("*", cors());
 app.use(express.json());
 app.use(cookieParser());
-app.use(session({
-  secret: 'yoursecret',
-  cookie: {
-      domain: 'pixpel.io',
-      maxAge: 1000 * 60 * 24 * 30 // 30 days
-  },
-  resave: false,
-  saveUninitialized: true
-}));
-app.use(function(req, res, next) {
-  res.header('Access-Control-Allow-Credentials', "true");
-  res.header('Access-Control-Allow-Origin', req.headers.origin);
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+app.use(
+  session({
+    secret: "yoursecret",
+    cookie: {
+      domain: "pixpel.io",
+      maxAge: 1000 * 60 * 24 * 30, // 30 days
+    },
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Origin", req.headers.origin);
+  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept"
+  );
   next();
 });
 
@@ -77,6 +83,7 @@ app.use("/players", playerRoutes);
 app.use("/orders", orderRoutes);
 app.use("/nfts", nftRoutes);
 app.use("/cart", cartRoutes);
+app.use("/userWallets", userWalletRoutes);
 app.use("/collections", collectionRoutes);
 app.use("/launchpad", launchpadRoutes);
 app.use("/tokenrelease", tokenreleaseRoutes);
@@ -93,16 +100,15 @@ app.get("/logout", async (req: any, res: any) => {
   try {
     req.session.token = null;
     req.session.save(function (err: any) {
-      if (err) handleError(err, res)
-  
+      if (err) handleError(err, res);
+
       // regenerate the session, which is good practice to help
       // guard against forms of session fixation
       req.session.regenerate(function (err: any) {
-        if (err) handleError(err, res)
-        res.sendStatus(200)
-      })
-    })
-  
+        if (err) handleError(err, res);
+        res.sendStatus(200);
+      });
+    });
   } catch (error) {
     handleError(error, res);
   }
