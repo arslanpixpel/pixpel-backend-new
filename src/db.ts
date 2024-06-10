@@ -112,7 +112,7 @@ createTable(
   id SERIAL PRIMARY KEY,
   userId TEXT NOT NULL,
   userType TEXT NOT NULL,
-  wallet TEXT NOT NULL,
+  wallet TEXT NOT NULL
   `
 );
 
