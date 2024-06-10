@@ -12,6 +12,17 @@ import {
   handleUpdateResponse,
   handleDeleteResponse,
 } from "../helper/Responses";
+import {
+  collection,
+  query,
+  getDocs,
+  where,
+  Query,
+  DocumentData,
+} from "firebase/firestore";
+import { db } from "../config/config";
+import axios from "axios";
+import { readDeveloperByWallet } from "../models/Developer";
 
 export const createData = async (
   req: express.Request,
@@ -245,4 +256,25 @@ export const getHolderById = async (
   } catch (err) {
     handleError(err, res);
   }
+};
+
+export const getAllRockets = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  const { account } = req.body;
+  const q = query(collection(db, "rockets"));
+  const querySnapshot = await getDocs(q);
+  console.log(querySnapshot, "querySnapshot");
+
+  const lockupHolders: any[] = [];
+  querySnapshot.forEach((doc: any) => {
+    lockupHolders.push({ ...doc.data(), doc_id: doc.id });
+  });
+
+  const filteredRockets = lockupHolders.filter(
+    (item) => item.owner.toLowerCase() === account.toLowerCase()
+  );
+
+  res.json(filteredRockets);
 };
