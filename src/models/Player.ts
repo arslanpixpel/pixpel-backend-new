@@ -314,3 +314,31 @@ export const updatePlayerDisableStatus = async (
     throw err;
   }
 };
+
+export const updatePlayerWallet = async (
+  id: number,
+  updates: Partial<{ zetawallet: string; wallet: string }>
+) => {
+  try {
+    const { zetawallet, wallet } = updates;
+
+    if (zetawallet !== undefined) {
+      const result = await query(
+        "UPDATE players SET zetawallet=$1 WHERE id=$2 RETURNING *",
+        [zetawallet, id]
+      );
+      return result.rows[0];
+    } else if (wallet !== undefined) {
+      const result = await query(
+        "UPDATE players SET wallet=$1 WHERE id=$2 RETURNING *",
+        [wallet, id]
+      );
+      return result.rows[0];
+    } else {
+      throw new Error("No valid column to update");
+    }
+  } catch (err) {
+    const error = err as Error;
+    throw error;
+  }
+};

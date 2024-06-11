@@ -284,3 +284,30 @@ export const updatePlayerDisableStatusController = async (
     handleError(err, res); // Implement handleError function accordingly
   }
 };
+
+export const updatePlayerWallet = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  const { id } = req.params;
+  const { wallet, zetawallet } = req.body;
+
+  try {
+    const updates: Partial<{ zetawallet: string; wallet: string }> = {};
+    if (zetawallet !== undefined) updates.zetawallet = zetawallet;
+    if (wallet !== undefined) updates.wallet = wallet;
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: "No valid column to update" });
+    }
+
+    const player = await Player.updatePlayerWallet(parseInt(id), updates);
+    if (!player) {
+      return res.status(404).json({ message: "Player not found" });
+    }
+
+    res.status(200).json({ message: "Wallet updated successfully", player });
+  } catch (err) {
+    handleError(err, res);
+  }
+};
