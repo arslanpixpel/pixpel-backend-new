@@ -79,6 +79,19 @@ export const updatePlayerImg = async (
   }
 };
 
+export const updatePlayerTwoFA = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { TwoFA } = req.body;
+    const player = await Player.updateTwoFa(parseInt(req.params.id), TwoFA);
+    handleUpdateResponse(res, player, successMessage, errorMessage);
+  } catch (err) {
+    handleError(err, res);
+  }
+};
+
 export const updatePlayer = async (
   req: express.Request,
   res: express.Response
@@ -127,10 +140,8 @@ export const signupPlayer = async (req: any, res: express.Response) => {
 
     req.session.regenerate(function (err: any) {
       if (err) handleError(err, res);
-
       // store user information in session, typically a user id
       req.session.token = token;
-
       // save the session before redirection to ensure page
       // load does not happen before session is saved
       req.session.save(function (err: any) {

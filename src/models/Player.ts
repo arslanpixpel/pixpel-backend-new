@@ -112,7 +112,7 @@ export const updatePlayer = async (id: number, updates: Partial<Player>) => {
     } = updates;
 
     const result = await query(
-      "UPDATE players SET name=$1, email=$2, wallet=$3, contact_details=$4, verified=$5, img=$6, address=$7, country=$8, launchedAtPixpel=$9, legalName=$10, perPercentage=$11, percentage=$12, shareHolders=$13, isdisable=$14 WHERE id=$15 RETURNING *",
+      "UPDATE players SET name=$1, email=$2, wallet=$3, contact_details=$4, verified=$5, img=$6, address=$7, country=$8, launchedAtPixpel=$9, legalName=$10, perPercentage=$11, percentage=$12, shareHolders=$13, isdisable=$14 WHERE id=$15",
       [
         name,
         email,
@@ -237,6 +237,18 @@ export const signupPlayer = async (player: {
   }
 };
 
+export const updateTwoFa = async (id: number, TwoFa: string) => {
+  try {
+    const result = await query(
+      "UPDATE players SET twofa_key=$2 WHERE id = $1 RETURNING *",
+      [id, TwoFa]
+    );
+    return result.rows[0];
+  } catch (err) {
+    const error = err as Error;
+    throw error;
+  }
+};
 export const signinPlayer = async (email: string, password: string) => {
   try {
     const result = await query("SELECT * FROM players WHERE email = $1", [

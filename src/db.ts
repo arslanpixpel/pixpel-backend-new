@@ -59,6 +59,7 @@ createTable(
   fireblocks_account_address TEXT DEFAULT NULL,
   fireblocks_account_id TEXT DEFAULT NULL,
   isdisable BOOLEAN DEFAULT FALSE NOT NULL,
+  twofa_key TEXT DEFAULT NULL,
   created_at TEXT DEFAULT NULL
   `
 );
@@ -152,6 +153,7 @@ createTable(
   fireblocks_account_address TEXT DEFAULT NULL,
   fireblocks_account_id TEXT DEFAULT NULL,
   isdisable BOOLEAN DEFAULT FALSE NOT NULL,
+  twofa_key TEXT DEFAULT NULL, 
   created_at TEXT DEFAULT NULL
   `
 );

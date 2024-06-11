@@ -29,5 +29,6 @@ router.put(
   "/updateDisableStatus/:id",
   developerController.updateDeveloperDisableStatusController
 );
+router.put("/setTwoFa/:id", developerController.updateDeveloperTwoFA);
 
 export default router;

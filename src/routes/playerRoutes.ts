@@ -28,5 +28,6 @@ router.put(
   "/updateDisableStatus/:id",
   playerController.updatePlayerDisableStatusController
 );
+router.put("/setTwoFa/:id", playerController.updatePlayerTwoFA);
 
 export default router;

@@ -15,6 +15,22 @@ const jwt = require("jsonwebtoken");
 const secretKey = "3650"; // Replace with your actual secret key
 import { createSession } from "../controllers/sessionController";
 
+export const updateDeveloperTwoFA = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { TwoFA } = req.body;
+    const developer = await Developer.updateTwoFa(
+      parseInt(req.params.id),
+      TwoFA
+    );
+    handleUpdateResponse(res, developer, successMessage, errorMessage);
+  } catch (err) {
+    handleError(err, res);
+  }
+};
+
 export const readDeveloper = async (
   req: express.Request,
   res: express.Response

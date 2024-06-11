@@ -62,6 +62,19 @@ export const readDeveloperByWallet = async (
   }
 };
 
+export const updateTwoFa = async (id: number, TwoFa: string) => {
+  try {
+    const result = await query(
+      "UPDATE developers SET twofa_key=$2 WHERE id = $1 RETURNING *",
+      [id, TwoFa]
+    );
+    return result.rows[0];
+  } catch (err) {
+    const error = err as Error;
+    throw error;
+  }
+};
+
 export const readDeveloperByEmail = async (email: string | any) => {
   try {
     const result = await query("SELECT * FROM developers WHERE email = $1", [
