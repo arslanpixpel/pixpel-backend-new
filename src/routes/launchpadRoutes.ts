@@ -19,5 +19,6 @@ router.put(
 );
 router.get("/getAllHolders", launchpadController.getAllHolders);
 router.get("/getHolderbyId/:id", launchpadController.getHolderById);
+router.post("/getAllRockets", launchpadController.getAllRockets);
 
 export default router;
