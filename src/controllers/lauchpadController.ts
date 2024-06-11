@@ -278,3 +278,44 @@ export const getAllRockets = async (
 
   res.json(filteredRockets);
 };
+
+export const getAllRocketsInvestments = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  const account = String(req.body.account);
+  const q = query(collection(db, "rockets"));
+  const querySnapshot = await getDocs(q);
+
+  const lockupHoldersWithInvestmentPercentage: any[] = [];
+  querySnapshot.forEach((doc: any) => {
+    const rocketData = doc.data();
+    const { hard_cap, holders } = rocketData;
+    const totalInvestment = holders.reduce(
+      (acc: number, holder: any) => holder.amount,
+      0
+    );
+    const investmentPercentage = (totalInvestment / hard_cap) * 100;
+
+    // Check if the account is present in any of the holders' addresses
+    const isAccountHolder = holders.some(
+      (holder: any) => holder.address.toLowerCase() === account.toLowerCase()
+    );
+
+    if (isAccountHolder) {
+      // Adding investment percentage to each holder object
+      const holdersWithPercentage = holders.map((holder: any) => ({
+        ...holder,
+        investmentPercentage,
+      }));
+
+      lockupHoldersWithInvestmentPercentage.push({
+        ...rocketData,
+        holders: holdersWithPercentage,
+        doc_id: doc.id,
+      });
+    }
+  });
+
+  res.json(lockupHoldersWithInvestmentPercentage);
+};
