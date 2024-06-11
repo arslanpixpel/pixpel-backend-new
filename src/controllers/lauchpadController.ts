@@ -262,10 +262,10 @@ export const getAllRockets = async (
   req: express.Request,
   res: express.Response
 ) => {
-  const { account } = req.body;
+  // const { account } = req.body;
+  const account = String(req.body.account);
   const q = query(collection(db, "rockets"));
   const querySnapshot = await getDocs(q);
-  console.log(querySnapshot, "querySnapshot");
 
   const lockupHolders: any[] = [];
   querySnapshot.forEach((doc: any) => {
