@@ -22,6 +22,7 @@ import fireblocks from "./routes/fireBlocks";
 import authentication from "./routes/authRoutes";
 import p2pProfile from "./routes/p2pProfileRoutes";
 import dexTesting from "./routes/dexTestingRoutes";
+import supportedBlockchains from "./routes/supportedBlockchainsRoutes";
 const cron = require("node-cron");
 import cookieParser from "cookie-parser";
 import { query } from "./db";
@@ -96,6 +97,8 @@ app.use("/uploadimage", uploadImage);
 app.use("/fireBlocks", fireblocks);
 app.use("/authentication", authentication);
 app.use("/p2pProfile", p2pProfile);
+app.use("/supportedBlockchains", supportedBlockchains);
+
 app.get("/logout", async (req: any, res: any) => {
   try {
     req.session.token = null;

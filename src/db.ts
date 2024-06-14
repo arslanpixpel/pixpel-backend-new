@@ -294,6 +294,11 @@ createTable(
   "id SERIAL PRIMARY KEY, fireblocks_account_address TEXT DEFAULT NULL, fireblocks_account_id TEXT DEFAULT NULL"
 );
 
+createTable(
+  "supported_blockchains",
+  "id SERIAL PRIMARY KEY,  logo TEXT NOT NULL, blockchain_name TEXT NOT NULL, symbol TEXT NOT NULL"
+);
+
 export const query = (text: string, params: any[]) => pool.query(text, params);
 
 // import { Pool } from "pg";
